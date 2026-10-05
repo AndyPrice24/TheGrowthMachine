@@ -25,8 +25,48 @@ owners and recorded here.
 - **The name is final:** The Growth Machine. The domain is `thegrowthmachine.co`,
   always written in full and in lowercase. `thegrowthmachine.com` belongs to
   an unrelated company.
-- **Stack: Astro, static output.** The build handover specifies it and the
-  PDF names no stack. Whether content is edited through a CMS is still open.
+- **Stack: Astro, static output, no CMS.** Andrew edits through Claude, so
+  content lives as files in this repo.
+- **Hosting: Cloudflare.** The domain is registered at GoDaddy. DNS moves to
+  Cloudflare, so the site, email records and analytics are managed in one
+  place.
+- **Analytics: Cloudflare Web Analytics, page views only.** It sets no
+  cookies, so the site needs no consent banner. Never add GA or a pixel
+  without an explicit decision.
+- **Market: based in South Africa, selling locally and internationally.**
+  Use British/South African spelling. Write for an international reader;
+  SEO targets South African search terms first.
+- **The framework is revenue and margin.** Margin includes money won back
+  through processes and team structure, not only COGS and fees. The pairing
+  is "two operators, both sides of the number"; never claim that each
+  partner owns one side exclusively.
+- **Offer shape: one way in, two ways to continue.** First a paid deep dive
+  for a fixed fee agreed before starting; very large jobs are negotiated.
+  Its output is a ranked view of what is holding the business back, with the
+  reasoning behind it. After that, either a defined project with a handover
+  (strategy, plan, system, AI tool) or ongoing embedded leadership and
+  execution. Almost every client gets direction from both partners, with one
+  or both doing the work. Engagement names are not final.
+- **Working method name: "Find the leak, then the lever."** Provisional
+  until refined.
+- **Set the client up not to need us.** A stated principle of the service,
+  not a caveat.
+- **Primary buyer: founders and CEOs.** Investors and boards are secondary
+  and get no path of their own.
+- **No photography exists.** Use designed placeholders until a shoot
+  happens. Never use stock photos of other people standing in for Andrew and
+  Tarren, and never use AI likenesses of them.
+- **The logo contains a gear.** No other gear or cog imagery anywhere on the
+  site.
+- **Sales motion: Andrew sells outbound.** He contacts companies that are
+  hiring a CRO, CMO, GTM lead or entrepreneur in residence and pitches this
+  instead of a full-time hire. The site's first job is to back up that pitch
+  for someone arriving from his email.
+
+## Still open
+
+Engagement names · launch scope · booking tool · the look (mockups pending)
+· bios and career proof · Path B label.
 
 ## Rules both briefs agree on
 
