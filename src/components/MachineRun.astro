@@ -1,0 +1,279 @@
+---
+/*
+ * The machine: Andrew's render of the method, run by the reader's scroll.
+ *
+ * A spotlight moves through it in order (problems in, the four stages,
+ * results out) while live text beside it says what each part does. The
+ * nameplate is redrawn in vector over the render, with the real logo, because
+ * the render's own lettering was an AI approximation of it; its gear turns as
+ * the machine runs.
+ *
+ * The render pins in place and the scroll drives the sequence. Desktop shows
+ * the landscape render with the steps beside it; a phone shows the portrait
+ * render, sized to fit the screen, with the current step beneath it.
+ * Reduced motion or no JavaScript: no pinning, no spotlight, every step listed.
+ *
+ * The images are generated at build time from src/assets/machine/ as AVIF and
+ * WebP at two widths each, and load lazily: the page does not pay for them
+ * until the reader is near.
+ */
+import { getImage } from "astro:assets";
+import desktopSrc from "../assets/machine/machine-desktop.png";
+import mobileSrc from "../assets/machine/machine-mobile.png";
+import { LOGO_VIEWBOX, GEAR_CENTRE } from "./logo-paths";
+
+type Box = [number, number, number, number]; // x, y, width, height in image pixels
+
+const art = {
+  desktop: {
+    src: desktopSrc,
+    widths: [960, 1448],
+    size: [1448, 1086],
+    plate: { x: 545, y: 515, w: 364, h: 143, r: 7 },
+    logo: { cx: 727.5, cy: 586.5, w: 267 },
+    rivets: [[559, 532], [895, 532], [559, 642], [895, 642]],
+    rivet: 7,
+    regions: {
+      in: [8, 78, 282, 622],
+      s1: [317, 650, 167, 245],
+      s2: [506, 650, 167, 245],
+      s3: [695, 650, 167, 245],
+      s4: [884, 650, 167, 245],
+      out: [1138, 88, 290, 820],
+    } as Record<string, Box>,
+  },
+  mobile: {
+    src: mobileSrc,
+    widths: [640, 941],
+    size: [941, 1672],
+    plate: { x: 272, y: 652, w: 390, h: 158, r: 8 },
+    logo: { cx: 475.5, cy: 732.5, w: 281 },
+    rivets: [[302, 674], [646, 674], [302, 796], [646, 796]],
+    rivet: 8,
+    regions: {
+      in: [150, 55, 670, 380],
+      s1: [65, 814, 198, 279],
+      s2: [264, 814, 198, 279],
+      s3: [463, 814, 198, 279],
+      s4: [662, 814, 198, 279],
+      out: [48, 1108, 845, 490],
+    } as Record<string, Box>,
+  },
+};
+
+const sources = async (a: (typeof art)["desktop"]) => ({
+  avif: await getImage({ src: a.src, format: "avif", widths: a.widths }),
+  webp: await getImage({ src: a.src, format: "webp", widths: a.widths }),
+});
+const desktop = await sources(art.desktop);
+const mobile = await sources(art.mobile);
+
+const steps = [
+  { id: "in", k: "In", name: "What comes in", text: "Stalled growth, an unclear go-to-market, weak acquisition, low conversion, margin leakage, founder dependency. Most businesses arrive with two or three." },
+  { id: "s1", k: "01", name: "Diagnose", text: "Find the real constraints. The deep dive ranks every problem by what it costs you, in revenue and in margin." },
+  { id: "s2", k: "02", name: "Design", text: "Build the growth system: a few priorities, each with an owner, a number and a place in the order." },
+  { id: "s3", k: "03", name: "Execute", text: "Implement and optimise, alongside your people. The work gets done in the business, not described in a deck." },
+  { id: "s4", k: "04", name: "Embed", text: "Make it stick in the business, so it keeps running when we step back." },
+  { id: "out", k: "Out", name: "What comes out", text: "More revenue and better margins, with the systems and the team to keep it going." },
+];
+
+const LOGO_ASPECT = 528 / 1409;
+const pct = (box: Box, size: number[]) =>
+  box.map((v, i) => ((v / size[i % 2]) * 100).toFixed(3)).join(",");
+---
+
+<div class="machine-run" data-machine-run>
+  <div class="pin">
+    {(["desktop", "mobile"] as const).map((kind) => {
+      const a = art[kind];
+      const img = kind === "desktop" ? desktop : mobile;
+      const [W, H] = a.size;
+      const lw = a.logo.w;
+      const lh = lw * LOGO_ASPECT;
+      const regions = Object.fromEntries(Object.entries(a.regions).map(([k, b]) => [k, pct(b, a.size)]));
+      return (
+        <figure class:list={["frame", `frame--${kind}`]} style={`aspect-ratio: ${W} / ${H}`} data-regions={JSON.stringify(regions)}>
+          <picture>
+            <source type="image/avif" srcset={img.avif.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
+            <source type="image/webp" srcset={img.webp.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
+            <img
+              src={img.webp.src}
+              width={W}
+              height={H}
+              loading="lazy"
+              decoding="async"
+              alt="The Growth Machine drawn as a machine. Problems go in at one end: stalled growth, unclear go-to-market, weak acquisition, low conversion, margin leakage and founder dependency. They pass through four stages, diagnose, design, execute and embed, and come out as more revenue, better margins, better systems, a stronger team and scalable growth."
+            />
+          </picture>
+          <svg class="overlay" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+            <defs>
+              <radialGradient id={`plate-${kind}`} cx="50%" cy="45%" r="70%">
+                <stop offset="0" style="stop-color: var(--plate-hi)" />
+                <stop offset="0.6" style="stop-color: var(--plate-mid)" />
+                <stop offset="1" style="stop-color: var(--plate-lo)" />
+              </radialGradient>
+              <radialGradient id={`rivet-${kind}`} cx="35%" cy="35%" r="70%">
+                <stop offset="0" style="stop-color: var(--rivet-hi)" />
+                <stop offset="1" style="stop-color: var(--rivet-lo)" />
+              </radialGradient>
+            </defs>
+            <rect class="plate" x={a.plate.x} y={a.plate.y} width={a.plate.w} height={a.plate.h} rx={a.plate.r} fill={`url(#plate-${kind})`} />
+            {a.rivets.map(([x, y]) => <circle cx={x} cy={y} r={a.rivet} fill={`url(#rivet-${kind})`} class="rivet" />)}
+            <svg x={a.logo.cx - lw / 2} y={a.logo.cy - lh / 2} width={lw} height={lh} viewBox={LOGO_VIEWBOX} overflow="visible">
+              <use href="#tgm-wordmark" class="plate-word"></use>
+              <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
+                <use href="#tgm-gear" class="plate-gear"></use>
+              </g>
+            </svg>
+          </svg>
+          <div class="spot" aria-hidden="true"></div>
+        </figure>
+      );
+    })}
+
+    <ol class="steps">
+      {steps.map((s, i) => (
+        <li class:list={["step", { "is-active": i === 0 }]} data-step={s.id}>
+          <span class="k">{s.k}</span>
+          <h3 class="name display">{s.name}</h3>
+          <p class="text">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</div>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const phone = window.matchMedia("(max-width: 760px)");
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-machine-run]")) {
+    const stepEls = [...root.querySelectorAll<HTMLElement>(".step")];
+    const order = stepEls.map((s) => s.dataset.step!);
+    let queued = false;
+    let current = -1;
+
+    const frame = () => root.querySelector<HTMLElement>(phone.matches ? ".frame--mobile" : ".frame--desktop")!;
+
+    function place(f: HTMLElement, id: string) {
+      const regions = JSON.parse(f.dataset.regions || "{}");
+      const [x, y, w, h] = (regions[id] || "0,0,0,0").split(",");
+      const spot = f.querySelector<HTMLElement>(".spot")!;
+      Object.assign(spot.style, { left: `${x}%`, top: `${y}%`, width: `${w}%`, height: `${h}%` });
+    }
+
+    function activate(i: number) {
+      if (i === current) return;
+      current = i;
+      stepEls.forEach((s, j) => s.classList.toggle("is-active", j === i));
+      place(frame(), order[i]);
+    }
+
+    function update() {
+      queued = false;
+      const vh = window.innerHeight || 800;
+      const f = frame();
+      // The render is pinned: the scroll through the section drives the sequence.
+      const r = root.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)));
+      const i = Math.min(order.length - 1, Math.floor(p * order.length));
+      activate(i);
+      f.querySelector<SVGElement>(".plate-gear")!.style.transform = `rotate(${(p * 720).toFixed(1)}deg)`;
+    }
+
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    function start() {
+      const live = !reduce.matches;
+      root.classList.toggle("is-live", live);
+      current = -1;
+      if (live) {
+        update();
+      } else {
+        stepEls.forEach((s) => s.classList.remove("is-active"));
+      }
+    }
+
+    window.addEventListener("scroll", () => root.classList.contains("is-live") && queue(), { passive: true });
+    window.addEventListener("resize", () => root.classList.contains("is-live") && (current = -1, queue()));
+    reduce.addEventListener("change", start);
+    phone.addEventListener("change", start);
+    start();
+  }
+</script>
+
+<style>
+  .machine-run { position: relative; }
+  .pin { display: grid; gap: 28px; }
+
+  .frame { position: relative; margin: 0; width: 100%; overflow: hidden; border-radius: var(--radius); background: var(--ink); }
+  .frame picture, .frame img { display: block; width: 100%; height: 100%; }
+  .frame img { object-fit: cover; }
+  .overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .plate { stroke: var(--plate-edge); stroke-width: 1.5; }
+  .rivet { stroke: var(--rivet-lo); stroke-width: 1; }
+  .plate-word { fill: var(--ink); }
+  .plate-gear { fill: var(--torch); }
+
+  .frame--mobile { display: none; }
+
+  .spot { display: none; }
+
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+  .step { display: grid; gap: 6px; }
+  .k { font-family: var(--f-label); font-size: var(--step-label); letter-spacing: 0.2em; text-transform: uppercase; color: var(--torch); }
+  .name { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.8rem); }
+  .text { color: var(--muted); max-width: 30em; }
+
+  /* ---- live: the render pins and the scroll runs it ---- */
+  .is-live { height: calc(100vh + 6 * 45vh); }
+  .is-live .pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    align-content: center;
+    padding-block: 20px;
+  }
+  .is-live .step { transition: opacity 0.4s var(--ease-out); }
+
+  @media (min-width: 761px) {
+    /* The machine is the centrepiece: let it run wider than the text column. */
+    .machine-run { margin-inline: calc((100% - min(100vw - 2 * var(--gutter), 1400px)) / 2); }
+    .is-live .pin { grid-template-columns: minmax(0, 1fr) minmax(240px, 280px); align-items: center; gap: clamp(24px, 3vw, 48px); }
+    .is-live .frame--desktop { width: min(100%, calc((100svh - 40px) * 1448 / 1086)); justify-self: center; }
+    .is-live .step { opacity: 0.38; }
+    .is-live .step .text { display: none; }
+    .is-live .step.is-active { opacity: 1; }
+    .is-live .step.is-active .text { display: block; }
+    .is-live .step:not(.is-active) .k { color: var(--muted); }
+  }
+
+  @media (max-width: 760px) {
+    .frame--desktop { display: none; }
+    .frame--mobile { display: block; }
+    .is-live .pin { gap: 14px; justify-items: center; align-content: start; padding-top: 16px; }
+    .is-live .frame--mobile { width: min(100%, calc((100svh - 190px) * 941 / 1672)); }
+    .is-live .steps { min-height: 130px; align-content: start; width: 100%; }
+    .is-live .step:not(.is-active) { display: none; }
+  }
+
+  .is-live .spot {
+    display: block;
+    position: absolute;
+    border: 2px solid var(--torch);
+    border-radius: 14px;
+    box-shadow: 0 0 0 200vmax var(--shade), 0 0 32px var(--glow), inset 0 0 24px var(--glow);
+    transition: left 0.6s var(--ease-out), top 0.6s var(--ease-out), width 0.6s var(--ease-out), height 0.6s var(--ease-out);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spot { transition: none; }
+  }
+</style>

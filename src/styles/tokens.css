@@ -24,6 +24,17 @@
   --line-on-cream: #DCD7CB;
   --line-on-ink: #2B2B2B;
 
+  /* illustration: the nameplate laid over the machine render, and the dim
+     around the spotlight. Used by MachineRun only. */
+  --plate-hi: #F0E8DC;
+  --plate-mid: #E2D7C8;
+  --plate-lo: #C9BBA8;
+  --plate-edge: #9C8F7E;
+  --rivet-hi: #EDEDED;
+  --rivet-lo: #555555;
+  --shade: color-mix(in srgb, var(--ink) 60%, transparent);
+  --glow: color-mix(in srgb, var(--torch) 55%, transparent);
+
   /* type: the families come from the Astro fonts config */
   --f-display: var(--font-display), "Arial Black", sans-serif;
   --f-body: var(--font-body), system-ui, sans-serif;

@@ -47,7 +47,9 @@ records the outcome. Where this file and a brief disagree, this file wins.
   or both doing the work.
 - **Working engagement names:** the Machine Check (deep dive), the Build
   (project with a handover), the Growth Office (ongoing). Not final.
-- **Working method name: "Find the leak, then the lever."** Provisional.
+- **The method is four stages: Diagnose, Design, Execute, Embed** (Andrew's
+  words, from his machine render). "Find the leak, then the lever." is the
+  provisional name over them. The engagements are how the method is bought.
 - **Set the client up not to need us.** A stated principle of the service,
   not a caveat. When a client is ready to hire permanently, we help them hire
   and hand over.
@@ -83,9 +85,24 @@ logo itself.
 - **The gear.** It is the only colour in the logo, and it moves: one turn on
   page load, two teeth on hover, and scroll-linked in the revenue/margin
   diagram. Never continuous. With reduced motion it does not move.
-- **One exception to "no gear imagery outside the logo":** the `Machine`
-  diagram uses the logo's own gear as the mechanism that revenue and margin
-  feed. Approved by Andrew. Nothing else.
+- **Gear imagery outside the logo: two approved exceptions, nothing else.**
+  The `Machine` diagram uses the logo's own gear as the mechanism that revenue
+  and margin feed. And `MachineRun` (below) is Andrew's own machine render.
+- **The machine render is the page's centrepiece (decided 6 October 2026).**
+  Andrew judged the typographic version of the process "too stale and too
+  boring" and chose his photoreal machine instead, knowingly overriding the
+  PDF's ban on gears, rockets and rising charts for this one element. Its
+  costs were mitigated rather than ignored:
+  - The 2.4MB PNGs live in `src/assets/machine/` and are built into AVIF and
+    WebP at two widths each (70 to 260KB), loaded lazily, so the page does not
+    pay for them until the reader is near.
+  - The render's nameplate carried an AI approximation of the logo. A vector
+    nameplate with the real logo is laid over it, and its gear turns as the
+    machine runs.
+  - Text baked into the render is too small to read on a phone, so every step
+    is also live text beside or beneath it. The image has full alt text.
+  - The spotlight moves on scroll; the render itself never moves. Reduced
+    motion, or no JavaScript: no pinning, no spotlight, every step listed.
 - **The logo below 200px wide** loses its hairline THE and MACHINE. 200px is
   the default; the phone header goes to 156px, and 136px under 400px.
   `public/favicon.svg` is a simplified 8-tooth gear, because the full gear
@@ -96,8 +113,8 @@ logo itself.
 `src/components/`, twelve so far against a ceiling of fourteen. A page that
 seems to need another one usually needs a variant of an existing one.
 
-Logo · Header · Footer · Button · Section · Hero · Machine · Card (variants:
-path, symptom, engagement) · BioBlock · Placeholder · MethodCallout · CtaBand
+Logo · Header · Footer · Button · Section · Hero · Machine · MachineRun ·
+Card (variants: path, symptom, engagement) · BioBlock · Placeholder · CtaBand
 
 ## Content that does not exist yet
 
