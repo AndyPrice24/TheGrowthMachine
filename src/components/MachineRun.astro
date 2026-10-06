@@ -2,8 +2,11 @@
 /*
  * The machine: Andrew's render of the method, run by the reader's scroll.
  *
- * A spotlight moves through it in order (problems in, the four stages,
- * results out) while live text beside it says what each part does. The
+ * The render is cut out of its studio backdrop, so the machine and its rubble
+ * sit directly on the page. As the reader scrolls, the machine fades back and
+ * one part at a time comes forward at full strength with a torch outline
+ * (problems in, the four stages, results out) while live text beside it says
+ * what that part does. The
  * nameplate is redrawn in vector over the render, with the real logo, because
  * the render's own lettering was an AI approximation of it; its gear turns as
  * the machine runs.
@@ -13,9 +16,9 @@
  * render, sized to fit the screen, with the current step beneath it.
  * Reduced motion or no JavaScript: no pinning, no spotlight, every step listed.
  *
- * The images are generated at build time from src/assets/machine/ as AVIF and
- * WebP at two widths each, and load lazily: the page does not pay for them
- * until the reader is near.
+ * The cut-outs in src/assets/machine/ are made from Andrew's originals in
+ * brand/machine/ by brand/tools/cutout-machine.py. The build turns them into
+ * AVIF and WebP (with transparency) at two widths each, loaded lazily.
  */
 import { getImage } from "astro:assets";
 import desktopSrc from "../assets/machine/machine-desktop.png";
@@ -33,6 +36,7 @@ const art = {
     logo: { cx: 727.5, cy: 586.5, w: 267 },
     rivets: [[559, 532], [895, 532], [559, 642], [895, 642]],
     rivet: 7,
+    floor: { y: 952, x0: 30, x1: 1440 },
     regions: {
       in: [8, 78, 282, 622],
       s1: [317, 650, 167, 245],
@@ -50,6 +54,7 @@ const art = {
     logo: { cx: 475.5, cy: 732.5, w: 281 },
     rivets: [[302, 674], [646, 674], [302, 796], [646, 796]],
     rivet: 8,
+    floor: { y: 1588, x0: 50, x1: 890 },
     regions: {
       in: [150, 55, 670, 380],
       s1: [65, 814, 198, 279],
@@ -92,41 +97,50 @@ const pct = (box: Box, size: number[]) =>
       const lh = lw * LOGO_ASPECT;
       const regions = Object.fromEntries(Object.entries(a.regions).map(([k, b]) => [k, pct(b, a.size)]));
       return (
-        <figure class:list={["frame", `frame--${kind}`]} style={`aspect-ratio: ${W} / ${H}`} data-regions={JSON.stringify(regions)}>
-          <picture>
-            <source type="image/avif" srcset={img.avif.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
-            <source type="image/webp" srcset={img.webp.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
-            <img
-              src={img.webp.src}
-              width={W}
-              height={H}
-              loading="lazy"
-              decoding="async"
-              alt="The Growth Machine drawn as a machine. Problems go in at one end: stalled growth, unclear go-to-market, weak acquisition, low conversion, margin leakage and founder dependency. They pass through four stages, diagnose, design, execute and embed, and come out as more revenue, better margins, better systems, a stronger team and scalable growth."
-            />
-          </picture>
-          <svg class="overlay" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
-            <defs>
-              <radialGradient id={`plate-${kind}`} cx="50%" cy="45%" r="70%">
-                <stop offset="0" style="stop-color: var(--plate-hi)" />
-                <stop offset="0.6" style="stop-color: var(--plate-mid)" />
-                <stop offset="1" style="stop-color: var(--plate-lo)" />
-              </radialGradient>
-              <radialGradient id={`rivet-${kind}`} cx="35%" cy="35%" r="70%">
-                <stop offset="0" style="stop-color: var(--rivet-hi)" />
-                <stop offset="1" style="stop-color: var(--rivet-lo)" />
-              </radialGradient>
-            </defs>
-            <rect class="plate" x={a.plate.x} y={a.plate.y} width={a.plate.w} height={a.plate.h} rx={a.plate.r} fill={`url(#plate-${kind})`} />
-            {a.rivets.map(([x, y]) => <circle cx={x} cy={y} r={a.rivet} fill={`url(#rivet-${kind})`} class="rivet" />)}
-            <svg x={a.logo.cx - lw / 2} y={a.logo.cy - lh / 2} width={lw} height={lh} viewBox={LOGO_VIEWBOX} overflow="visible">
-              <use href="#tgm-wordmark" class="plate-word"></use>
-              <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
-                <use href="#tgm-gear" class="plate-gear"></use>
-              </g>
-            </svg>
-          </svg>
-          <div class="spot" aria-hidden="true"></div>
+        <figure
+          class:list={["frame", `frame--${kind}`]}
+          style={`aspect-ratio: ${W} / ${H}; --floor-y: ${((a.floor.y / H) * 100).toFixed(2)}%; --floor-x: ${(((a.floor.x0 + a.floor.x1) / 2 / W) * 100).toFixed(2)}%; --floor-w: ${(((a.floor.x1 - a.floor.x0) / W) * 100).toFixed(2)}%`}
+          data-regions={JSON.stringify(regions)}
+        >
+          <div class="floor" aria-hidden="true"></div>
+          {(["base", "lit"] as const).map((layer) => (
+            <div class:list={["layer", layer]} aria-hidden={layer === "lit" ? "true" : undefined}>
+              <picture>
+                <source type="image/avif" srcset={img.avif.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
+                <source type="image/webp" srcset={img.webp.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
+                <img
+                  src={img.webp.src}
+                  width={W}
+                  height={H}
+                  loading="lazy"
+                  decoding="async"
+                  alt={layer === "base" ? "The Growth Machine drawn as a machine. Problems go in at one end: stalled growth, unclear go-to-market, weak acquisition, low conversion, margin leakage and founder dependency. They pass through four stages, diagnose, design, execute and embed, and come out as more revenue, better margins, better systems, a stronger team and scalable growth." : ""}
+                />
+              </picture>
+              <svg class="overlay" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+                <defs>
+                  <radialGradient id={`plate-${kind}-${layer}`} cx="50%" cy="45%" r="70%">
+                    <stop offset="0" style="stop-color: var(--plate-hi)" />
+                    <stop offset="0.6" style="stop-color: var(--plate-mid)" />
+                    <stop offset="1" style="stop-color: var(--plate-lo)" />
+                  </radialGradient>
+                  <radialGradient id={`rivet-${kind}-${layer}`} cx="35%" cy="35%" r="70%">
+                    <stop offset="0" style="stop-color: var(--rivet-hi)" />
+                    <stop offset="1" style="stop-color: var(--rivet-lo)" />
+                  </radialGradient>
+                </defs>
+                <rect class="plate" x={a.plate.x} y={a.plate.y} width={a.plate.w} height={a.plate.h} rx={a.plate.r} fill={`url(#plate-${kind}-${layer})`} />
+                {a.rivets.map(([x, y]) => <circle cx={x} cy={y} r={a.rivet} fill={`url(#rivet-${kind}-${layer})`} class="rivet" />)}
+                <svg x={a.logo.cx - lw / 2} y={a.logo.cy - lh / 2} width={lw} height={lh} viewBox={LOGO_VIEWBOX} overflow="visible">
+                  <use href="#tgm-wordmark" class="plate-word"></use>
+                  <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
+                    <use href="#tgm-gear" class="plate-gear"></use>
+                  </g>
+                </svg>
+              </svg>
+            </div>
+          ))}
+          <div class="ring" aria-hidden="true"></div>
         </figure>
       );
     })}
@@ -157,9 +171,10 @@ const pct = (box: Box, size: number[]) =>
 
     function place(f: HTMLElement, id: string) {
       const regions = JSON.parse(f.dataset.regions || "{}");
-      const [x, y, w, h] = (regions[id] || "0,0,0,0").split(",");
-      const spot = f.querySelector<HTMLElement>(".spot")!;
-      Object.assign(spot.style, { left: `${x}%`, top: `${y}%`, width: `${w}%`, height: `${h}%` });
+      const [x, y, w, h] = String(regions[id] || "0,0,0,0").split(",").map(Number);
+      f.style.setProperty("--clip", `inset(${y}% ${100 - x - w}% ${100 - y - h}% ${x}% round 14px)`);
+      const ring = f.querySelector<HTMLElement>(".ring")!;
+      Object.assign(ring.style, { left: `${x}%`, top: `${y}%`, width: `${w}%`, height: `${h}%` });
     }
 
     function activate(i: number) {
@@ -178,7 +193,8 @@ const pct = (box: Box, size: number[]) =>
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)));
       const i = Math.min(order.length - 1, Math.floor(p * order.length));
       activate(i);
-      f.querySelector<SVGElement>(".plate-gear")!.style.transform = `rotate(${(p * 720).toFixed(1)}deg)`;
+      const turn = `rotate(${(p * 720).toFixed(1)}deg)`;
+      f.querySelectorAll<SVGElement>(".plate-gear").forEach((g) => (g.style.transform = turn));
     }
 
     const queue = () => {
@@ -211,9 +227,21 @@ const pct = (box: Box, size: number[]) =>
   .machine-run { position: relative; }
   .pin { display: grid; gap: 28px; }
 
-  .frame { position: relative; margin: 0; width: 100%; overflow: hidden; border-radius: var(--radius); background: var(--ink); }
-  .frame picture, .frame img { display: block; width: 100%; height: 100%; }
-  .frame img { object-fit: cover; }
+  .frame { position: relative; margin: 0; width: 100%; }
+  .layer { position: absolute; inset: 0; }
+  .layer picture, .layer img { display: block; width: 100%; height: 100%; }
+  .layer img { object-fit: contain; }
+  .lit { display: none; }
+  /* a soft contact shadow, so the machine stands on the page rather than floating */
+  .floor {
+    position: absolute;
+    left: calc(var(--floor-x) - var(--floor-w) / 2);
+    width: var(--floor-w);
+    top: calc(var(--floor-y) - 2.5%);
+    height: 5%;
+    background: radial-gradient(closest-side, var(--shade), transparent);
+    opacity: 0.55;
+  }
   .overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   .plate { stroke: var(--plate-edge); stroke-width: 1.5; }
   .rivet { stroke: var(--rivet-lo); stroke-width: 1; }
@@ -222,7 +250,7 @@ const pct = (box: Box, size: number[]) =>
 
   .frame--mobile { display: none; }
 
-  .spot { display: none; }
+  .ring { display: none; }
 
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
   .step { display: grid; gap: 6px; }
@@ -263,17 +291,24 @@ const pct = (box: Box, size: number[]) =>
     .is-live .step:not(.is-active) { display: none; }
   }
 
-  .is-live .spot {
+  /* live: the machine fades back, the active part comes forward at full strength */
+  .is-live .base { opacity: 0.5; filter: grayscale(0.35); transition: opacity 0.4s var(--ease-out); }
+  .is-live .lit {
+    display: block;
+    clip-path: var(--clip, inset(50%));
+    transition: clip-path 0.6s var(--ease-out);
+  }
+  .is-live .ring {
     display: block;
     position: absolute;
     border: 2px solid var(--torch);
     border-radius: 14px;
-    box-shadow: 0 0 0 200vmax var(--shade), 0 0 32px var(--glow), inset 0 0 24px var(--glow);
+    box-shadow: 0 0 28px var(--glow);
     transition: left 0.6s var(--ease-out), top 0.6s var(--ease-out), width 0.6s var(--ease-out), height 0.6s var(--ease-out);
     pointer-events: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .spot { transition: none; }
+    .ring, .lit { transition: none; }
   }
 </style>

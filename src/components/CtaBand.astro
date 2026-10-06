@@ -8,12 +8,13 @@ interface Props {
   title: string;
   href: string;
   action: string;
+  tone?: "ink" | "cream";
 }
 
-const { title, href, action } = Astro.props;
+const { title, href, action, tone = "cream" } = Astro.props;
 ---
 
-<section class="cta on-cream">
+<section class:list={["cta", `on-${tone}`]}>
   <div class="wrap inner">
     <h2 class="display h2">{title}</h2>
     <div class="side">
