@@ -1,0 +1,67 @@
+---
+/*
+ * Every page: head metadata, self-hosted fonts, the logo sprite, header and
+ * footer. Pages supply a title (60 characters or fewer) and a description
+ * (150 to 160 characters).
+ */
+import { Font } from "astro:assets";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { WORDMARK, GEAR } from "../components/logo-paths";
+import { LAUNCHED } from "../site";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en-ZA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {!LAUNCHED && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Mirrors --cream. A meta tag cannot read a CSS variable. -->
+    <meta name="theme-color" content="#F3F0E8" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Growth Machine" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+    <Font cssVariable="--font-label" />
+
+    <script is:inline>document.documentElement.classList.add("js");</script>
+    <slot name="head" />
+  </head>
+  <body>
+    <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <g id="tgm-wordmark">{WORDMARK.map((d) => <path d={d} />)}</g>
+        <path id="tgm-gear" d={GEAR} />
+      </defs>
+    </svg>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+</style>

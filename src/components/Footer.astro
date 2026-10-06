@@ -1,0 +1,29 @@
+---
+import Logo from "./Logo.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-foot on-ink">
+  <div class="wrap foot">
+    <a class="home" href="/" aria-label="The Growth Machine, home">
+      <Logo width={200} decorative />
+    </a>
+    <p class="where">Based in South Africa. Working with founders locally and internationally.</p>
+    <p class="meta">
+      <span class="domain">thegrowthmachine.co</span>
+      <span>© {year} The Growth Machine</span>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 40px; padding-block: 40px 48px; font-size: var(--step-small); color: var(--muted); }
+  .home { color: var(--fg); }
+  .where { max-width: 26em; }
+  .meta { margin-left: auto; display: grid; gap: 4px; text-align: right; }
+  .domain { color: var(--fg); letter-spacing: 0.04em; }
+  @media (max-width: 720px) {
+    .meta { margin-left: 0; text-align: left; }
+  }
+</style>

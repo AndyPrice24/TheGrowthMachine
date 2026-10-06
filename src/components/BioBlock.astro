@@ -1,0 +1,60 @@
+---
+/*
+ * One of the two partners. Until a real portrait exists, the image slot is a
+ * monogram: designed, clearly not a photo, and never a stand-in person.
+ */
+import Placeholder from "./Placeholder.astro";
+
+interface Props {
+  name: string;
+  role: string;
+  /** Set until the full bio and career outcomes have been supplied. */
+  pending?: string;
+}
+
+const { name, role, pending } = Astro.props;
+const initials = name.split(" ").map((n) => n[0]).join("");
+---
+
+<article class="bio">
+  <div class="portrait" aria-hidden="true"><span>{initials}</span></div>
+  <div class="text">
+    <h3 class="display h3">{name}</h3>
+    <p class="role label label--plain">{role}</p>
+    <div class="summary"><slot /></div>
+    {pending && <Placeholder needs={pending} />}
+  </div>
+</article>
+
+<style>
+  .bio { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 24px; align-items: start; }
+  .portrait {
+    aspect-ratio: 4 / 5;
+    max-width: 100%;
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .portrait::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--torch);
+  }
+  .portrait span { font-family: var(--f-display); font-size: 2.6rem; letter-spacing: -0.03em; }
+  .text { display: grid; gap: 12px; align-content: start; }
+  .role { color: var(--muted); font-size: 0.74rem; letter-spacing: 0.24em; }
+  .summary { max-width: 34em; }
+  @media (max-width: 520px) {
+    .bio { grid-template-columns: 96px minmax(0, 1fr); gap: 18px; }
+    .portrait span { font-size: 2rem; }
+  }
+</style>

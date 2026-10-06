@@ -1,0 +1,55 @@
+/*
+ * Design tokens. Defined once; every component reads from here.
+ * No hex values anywhere else in the codebase.
+ *
+ * Direction C, chosen 6 October 2026: cream and near-black sections
+ * alternating full-bleed, one bright orange, type taken from the logo.
+ *
+ * Contrast, measured (WCAG 2.1):
+ *   ink on cream / cream on ink   17.4:1
+ *   muted on cream                 6.0:1
+ *   muted on ink                   7.5:1
+ *   torch on ink                   5.2:1  text allowed
+ *   ink on torch (buttons)         5.2:1  text allowed
+ *   torch on cream                 3.3:1  GRAPHICS ONLY: gear, rules, buttons,
+ *                                         focus ring. Never text on cream.
+ */
+:root {
+  /* colour */
+  --torch: #FF2715;      /* the accent. The gear's colour. */
+  --ink: #0A0A0A;        /* dark ground and text on light */
+  --cream: #F3F0E8;      /* light ground and text on dark */
+  --muted-on-cream: #5D5A53;
+  --muted-on-ink: #A39F96;
+  --line-on-cream: #DCD7CB;
+  --line-on-ink: #2B2B2B;
+
+  /* type: the families come from the Astro fonts config */
+  --f-display: var(--font-display), "Arial Black", sans-serif;
+  --f-body: var(--font-body), system-ui, sans-serif;
+  --f-label: var(--font-label), system-ui, sans-serif;
+
+  --step-h1: clamp(2.4rem, 1.2rem + 5vw, 5.2rem);
+  --step-h2: clamp(1.75rem, 1.1rem + 2.6vw, 3rem);
+  --step-h3: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+  --step-lede: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
+  --step-body: 1rem;
+  --step-small: 0.92rem;
+  --step-label: 0.8rem;
+
+  --track-display: -0.025em;
+  --track-label: 0.34em;
+  --leading-display: 1;
+  --leading-body: 1.6;
+  --measure: 34em;
+
+  /* space and shape */
+  --gutter: clamp(20px, 4vw, 40px);
+  --content: 1160px;
+  --section-pad: clamp(64px, 9vw, 120px);
+  --radius: 4px;
+
+  /* motion */
+  --ease-out: cubic-bezier(.3, 0, .2, 1);
+  --ease-gear: cubic-bezier(.45, 0, .15, 1);
+}

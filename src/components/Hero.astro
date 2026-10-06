@@ -1,0 +1,27 @@
+---
+/*
+ * One promise, one primary action, one quieter one. No carousel, no stat bar,
+ * no logo wall. Sized to its content, not to the viewport.
+ */
+interface Props {
+  label: string;
+  title: string;
+}
+
+const { label, title } = Astro.props;
+---
+
+<section class="hero on-ink">
+  <div class="wrap inner">
+    <p class="label">{label}</p>
+    <h1 class="display h1">{title}</h1>
+    <div class="lede"><slot /></div>
+    <div class="actions"><slot name="actions" /></div>
+  </div>
+</section>
+
+<style>
+  .inner { display: grid; gap: 28px; padding-block: clamp(56px, 9vw, 120px) clamp(64px, 10vw, 132px); }
+  .h1 { max-width: 13em; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; margin-top: 8px; }
+</style>

@@ -1,0 +1,96 @@
+/*
+ * Base styles and the few primitives every section shares.
+ * Component-specific styles live in the component.
+ */
+@import "./tokens.css";
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 24px; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-body);
+  line-height: var(--leading-body);
+  overflow-x: clip;
+}
+
+img, svg { max-width: 100%; }
+a { color: inherit; }
+p, h1, h2, h3, figure { margin: 0; }
+
+:focus-visible { outline: 2px solid var(--torch); outline-offset: 3px; }
+
+/* ---- surfaces: every section is one or the other ---- */
+.on-ink {
+  --bg: var(--ink); --fg: var(--cream); --muted: var(--muted-on-ink); --line: var(--line-on-ink);
+  background: var(--bg); color: var(--fg);
+}
+.on-cream {
+  --bg: var(--cream); --fg: var(--ink); --muted: var(--muted-on-cream); --line: var(--line-on-cream);
+  background: var(--bg); color: var(--fg);
+}
+
+.wrap { max-width: var(--content); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---- type primitives ---- */
+.display {
+  font-family: var(--f-display);
+  font-weight: 400;
+  letter-spacing: var(--track-display);
+  line-height: var(--leading-display);
+  text-wrap: balance;
+}
+.h1 { font-size: var(--step-h1); }
+.h2 { font-size: var(--step-h2); }
+.h3 { font-size: var(--step-h3); line-height: 1.05; }
+
+.label {
+  font-family: var(--f-label);
+  font-size: var(--step-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.label::before {
+  content: "";
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--torch);
+}
+.label--plain::before { display: none; }
+
+.lede { font-size: var(--step-lede); color: var(--muted); max-width: var(--measure); }
+.muted { color: var(--muted); }
+.nums { font-variant-numeric: tabular-nums; }
+
+/* ---- text link with an underline that reads as navigation ---- */
+.link {
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--line);
+  padding-bottom: 2px;
+  transition: border-color .2s;
+}
+.link:hover { border-color: var(--fg); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

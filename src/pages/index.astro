@@ -1,15 +1,247 @@
 ---
-// Holding page. Replaced in phase 3, once the brief is settled.
+/*
+ * Homepage. Order, and why:
+ *   1 Hero            one promise
+ *   2 The reframe     revenue and margin; applies to both buyers, so before the fork
+ *   3 The fork        self-select in about four seconds
+ *   4 The problem     the seat you need and cannot justify full-time
+ *   5 How we work     one way in, two ways to continue
+ *   6 Who you get     high, because two named operators are the proof a method lacks
+ *   7 Track record    career results until client results exist
+ *   8 Qualifier       capacity is limited; say so, then book
+ *
+ * Copy is a working draft, refined with Andrew and Tarren.
+ */
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Section from "../components/Section.astro";
+import Machine from "../components/Machine.astro";
+import MethodCallout from "../components/MethodCallout.astro";
+import Card from "../components/Card.astro";
+import BioBlock from "../components/BioBlock.astro";
+import Placeholder from "../components/Placeholder.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Button from "../components/Button.astro";
 ---
 
-<html lang="en-GB">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>The Growth Machine</title>
-  </head>
-  <body>
-    <h1>The Growth Machine</h1>
-  </body>
-</html>
+<Base
+  title="Fractional CRO and Growth Leadership | The Growth Machine"
+  description="Two senior operators who fill the CRO, CMO or ecommerce seat part-time. We find what is leaking from revenue and margin, fix it, and hand it back to you."
+>
+  <Hero label="Fractional CRO · CMO · Ecommerce lead" title="Senior growth leadership, without the full-time hire.">
+    <p>
+      Two senior operators who have run revenue and margin themselves, working in your business part-time. We find
+      what is holding growth back, fix it with your team, and leave you able to run it without us.
+    </p>
+    <Fragment slot="actions">
+      <Button href="/call">Book a 30-minute call</Button>
+      <a class="link" href="#how-we-work">See how it works <span aria-hidden="true">→</span></a>
+    </Fragment>
+  </Hero>
+
+  <Section
+    tone="cream"
+    label="Both sides of the number"
+    title="Everyone sells founders more revenue. Almost nobody looks at what is leaking out of the margin."
+  >
+    <div class="reframe">
+      <Machine />
+      <div class="sides">
+        <div class="side">
+          <h3 class="display h3">Revenue</h3>
+          <p>New ways to earn, better ways to earn, and more from the same effort.</p>
+          <p class="levers muted">Pricing · Sales motion · Channels · Retention</p>
+        </div>
+        <div class="side">
+          <h3 class="display h3">Margin</h3>
+          <p>Money the business already makes and quietly loses on the way out.</p>
+          <p class="levers muted">Fees and costs · Processes · Team shape · Wasted spend</p>
+        </div>
+      </div>
+    </div>
+    <MethodCallout name="Find the leak, then the lever.">
+      Most fractional executives only work one side. Between the two of us we have run both, so the deep dive ranks
+      everything by what it costs you, wherever it sits.
+    </MethodCallout>
+  </Section>
+
+  <Section tone="ink" label="Start where you are" title="Which sounds like you?">
+    <div class="grid-2">
+      <Card
+        variant="path"
+        href="/ecommerce"
+        kicker="Ecommerce and consumer brands"
+        title="You sell online, on Amazon or into retail."
+        cta="For ecommerce brands"
+      >
+        <p>We look at contribution margin, acquisition cost, order value, marketplace fees and retention.</p>
+      </Card>
+      <Card
+        variant="path"
+        href="/startups"
+        kicker="Startups and scale-ups"
+        title="You need a commercial executive before you can justify one full-time."
+        cta="For startups"
+      >
+        <p>We look at pipeline, go-to-market, sales motion, pricing and what the board needs to see.</p>
+      </Card>
+    </div>
+  </Section>
+
+  <Section tone="cream" label="The awkward stage" title="You probably don't need another agency.">
+    <div class="problem">
+      <div class="lede-col">
+        <p class="lede">
+          Growing businesses reach an awkward stage. There are people, agencies, software and ideas, yet growth is
+          uneven, decisions still route through the founder, and nobody owns the whole commercial picture.
+        </p>
+        <p class="muted">
+          The problem might be sales, marketing, pricing, ecommerce or how the team is set up. Hire a specialist before
+          you know which, and the machine gets more complicated, not better.
+        </p>
+      </div>
+      <div class="symptoms">
+        <Card variant="symptom" title="Growth has stalled, or stopped being predictable.">
+          <p>And nobody can say whether it is a revenue problem or a margin problem.</p>
+        </Card>
+        <Card variant="symptom" title="Every important decision still goes through the founder.">
+          <p>So the business can only grow as fast as one person's diary.</p>
+        </Card>
+        <Card variant="symptom" title="You are about to hire a CRO or a CMO.">
+          <p>Before knowing which seat the business actually needs filled.</p>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="ink" id="how-we-work" label="How we work" title="One way in. Two ways to continue.">
+    <p class="lede">
+      Every engagement starts with a paid deep dive. What happens next depends on what it finds, and the decision is
+      yours.
+    </p>
+    <div class="grid-3">
+      <Card
+        variant="engagement"
+        kicker="Start here"
+        title="The Machine Check"
+        principle="Everything ranked by what it costs you."
+        href="/how-we-work/machine-check"
+        cta="About the Machine Check"
+      >
+        <p>
+          A fixed-fee deep dive into the whole commercial picture. You get a ranked view of what each problem costs
+          you, in revenue and in margin, with our reasoning and what to do first.
+        </p>
+      </Card>
+      <Card
+        variant="engagement"
+        kicker="If the fix is a thing"
+        title="The Build"
+        principle="It has to still work after we leave."
+        href="/how-we-work/build"
+        cta="About the Build"
+      >
+        <p>
+          A defined project with a handover: a strategy, a plan, a sales process, a system or an AI tool. We build it
+          with your team and leave it running.
+        </p>
+      </Card>
+      <Card
+        variant="engagement"
+        kicker="If the fix is leadership"
+        title="The Growth Office"
+        principle="In the business, not on a call."
+        href="/how-we-work/growth-office"
+        cta="About the Growth Office"
+      >
+        <p>
+          One or both of us in your business part-time, owning the growth agenda and doing the work alongside your
+          people. When you are ready to hire permanently, we help you hire and hand over.
+        </p>
+      </Card>
+    </div>
+    <div class="bench">
+      <p class="label">Specialists</p>
+      <p class="muted">
+        We are two. When a job needs a discipline we don't have, we bring in a specialist we have worked with, at their
+        rate, and you see the number before we commit it. We don't mark up other people's time.
+      </p>
+    </div>
+  </Section>
+
+  <Section
+    tone="cream"
+    label="Who you actually get"
+    title="Two senior operators. No juniors, no handoff."
+  >
+    <p class="lede">
+      The people you meet are the people doing the work. The problem decides who leads, and most clients get both of
+      us.
+    </p>
+    <div class="grid-2 bios">
+      <BioBlock
+        name="Andrew Price"
+        role="Revenue, sales and commercial strategy"
+        pending="Andrew's full bio, portrait and three to five career results"
+      >
+        <p>Multiple-time founder, CEO and chief revenue officer, across B2B and B2C.</p>
+      </BioBlock>
+      <BioBlock
+        name="Tarren Price"
+        role="Ecommerce and consumer brands"
+        pending="Tarren's full bio, portrait and three to five career results"
+      >
+        <p>
+          Ecommerce and FMCG personal care, across Amazon, Shopify and Meta advertising. Builds and reshapes ecommerce
+          operations to lift revenue and margin.
+        </p>
+      </BioBlock>
+    </div>
+    <p><a class="link" href="/who-we-are">Meet Andrew and Tarren <span aria-hidden="true">→</span></a></p>
+  </Section>
+
+  <Section tone="ink" label="Track record" title="Before The Growth Machine.">
+    <p class="lede">
+      What we have done in our own careers, labelled as exactly that. Client results replace this as soon as there are
+      results we are allowed to publish.
+    </p>
+    <Placeholder needs="Career results from Andrew and Tarren, written as problem, action, result, with numbers only where they can be stood behind" />
+  </Section>
+
+  <CtaBand
+    title="Not sure whether you need a CRO, a CMO or something else? Good. That is where we start."
+    href="/call"
+    action="Book a 30-minute call"
+  >
+    There are two of us, so we take on a small number of clients at a time. Thirty minutes, no deck: we will ask where
+    you are trying to get to and what is in the way.
+  </CtaBand>
+</Base>
+
+<style>
+  .reframe { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .sides { display: grid; gap: 28px; }
+  .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .side p { max-width: 32em; }
+  .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+  .problem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .lede-col { display: grid; gap: 18px; }
+  .lede-col .muted { max-width: 34em; }
+  .symptoms { display: grid; gap: 28px; }
+
+  .bench { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 10px 32px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 24px; }
+  .bench .muted { max-width: 44em; }
+
+  .bios { gap: 40px; }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .reframe, .problem, .grid-2, .bench { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

@@ -12,6 +12,7 @@ npm run dev       # local dev server at http://localhost:4321
 npm run build     # static build into dist/
 npm run preview   # serve the built site locally
 npm run check     # type-check .astro and .ts files
+npm run launch-check  # build, then list everything not ready for launch
 ```
 
 ## Deploy

@@ -3,10 +3,8 @@
 Marketing site for The Growth Machine, a two-person fractional executive firm
 (Andrew Price and Tarren Price). Domain: **thegrowthmachine.co**.
 
-**Status: the brief is being reconciled.** Two source briefs exist and they
-disagree on the core argument, the offer, the look and parts of the stack.
-Until this file is replaced with the merged brief, build nothing that depends
-on an unsettled decision: no page copy, no design tokens, no components.
+The site exists to get a qualified founder onto a 30-minute call. Everything is
+subordinate to that.
 
 ## Source briefs
 
@@ -15,8 +13,8 @@ on an unsettled decision: no page copy, no design tokens, no components.
 - `docs/briefs/website-developer-handover-v1.pdf`: the developer handover v1.
   It has page-by-page copy, wireframes, art direction and the photography brief.
 
-Neither one wins by default. Every conflict between them is decided by the
-owners and recorded here.
+They conflicted in many places. Andrew decided each conflict, and this file
+records the outcome. Where this file and a brief disagree, this file wins.
 
 ## Settled
 
@@ -25,17 +23,17 @@ owners and recorded here.
 - **The name is final:** The Growth Machine. The domain is `thegrowthmachine.co`,
   always written in full and in lowercase. `thegrowthmachine.com` belongs to
   an unrelated company.
-- **Stack: Astro, static output, no CMS.** Andrew edits through Claude, so
+- **Stack: Astro 7, static output, no CMS.** Andrew edits through Claude, so
   content lives as files in this repo.
 - **Hosting: Cloudflare.** The domain is registered at GoDaddy. DNS moves to
   Cloudflare, so the site, email records and analytics are managed in one
-  place.
+  place. Vercel's free plan does not allow commercial sites.
 - **Analytics: Cloudflare Web Analytics, page views only.** It sets no
   cookies, so the site needs no consent banner. Never add GA or a pixel
   without an explicit decision.
 - **Market: based in South Africa, selling locally and internationally.**
   Use British/South African spelling. Write for an international reader;
-  SEO targets South African search terms first.
+  SEO targets South African search terms first. `lang="en-ZA"`.
 - **The framework is revenue and margin.** Margin includes money won back
   through processes and team structure, not only COGS and fees. The pairing
   is "two operators, both sides of the number"; never claim that each
@@ -46,27 +44,78 @@ owners and recorded here.
   reasoning behind it. After that, either a defined project with a handover
   (strategy, plan, system, AI tool) or ongoing embedded leadership and
   execution. Almost every client gets direction from both partners, with one
-  or both doing the work. Engagement names are not final.
-- **Working method name: "Find the leak, then the lever."** Provisional
-  until refined.
+  or both doing the work.
+- **Working engagement names:** the Machine Check (deep dive), the Build
+  (project with a handover), the Growth Office (ongoing). Not final.
+- **Working method name: "Find the leak, then the lever."** Provisional.
 - **Set the client up not to need us.** A stated principle of the service,
-  not a caveat.
+  not a caveat. When a client is ready to hire permanently, we help them hire
+  and hand over.
 - **Primary buyer: founders and CEOs.** Investors and boards are secondary
   and get no path of their own.
-- **No photography exists.** Use designed placeholders until a shoot
-  happens. Never use stock photos of other people standing in for Andrew and
-  Tarren, and never use AI likenesses of them.
-- **The logo contains a gear.** No other gear or cog imagery anywhere on the
-  site.
 - **Sales motion: Andrew sells outbound.** He contacts companies that are
   hiring a CRO, CMO, GTM lead or entrepreneur in residence and pitches this
   instead of a full-time hire. The site's first job is to back up that pitch
   for someone arriving from his email.
+- **Launch scope:** Home, How we work and the three engagement pages, Who we
+  are, Before you hire, and booking. The Ecommerce and Startups paths follow.
+  No Insights section until four to six real articles exist.
+- **No photography exists.** Use designed placeholders (the monogram portrait
+  in `BioBlock`) until a shoot happens. Never use stock photos of other people
+  standing in for Andrew and Tarren, and never use AI likenesses of them.
+
+## Design system: direction C
+
+Chosen 6 October 2026 from three mockups. Cream and near-black sections
+alternate full-bleed down the page; one bright orange; type taken from the
+logo itself.
+
+- **Tokens live in `src/styles/tokens.css` and nowhere else.** No hex values
+  in components. The one exception is `theme-color` in the base layout,
+  because a meta tag cannot read a CSS variable.
+- **Torch (#FF2715) on cream is 3.3:1: graphics only.** The gear, buttons
+  (with ink text, 5.2:1), rules and the focus ring. Never text on cream. On
+  ink it passes for text.
+- **Type:** Archivo Black for headlines (heavy, like GROWTH), Archivo for
+  running text, Jost for labels set uppercase and widely spaced (like THE and
+  MACHINE). Self-hosted from Fontsource's npm packages through Astro's fonts
+  feature with the `local` provider; Latin subset only.
+- **The gear.** It is the only colour in the logo, and it moves: one turn on
+  page load, two teeth on hover, and scroll-linked in the revenue/margin
+  diagram. Never continuous. With reduced motion it does not move.
+- **One exception to "no gear imagery outside the logo":** the `Machine`
+  diagram uses the logo's own gear as the mechanism that revenue and margin
+  feed. Approved by Andrew. Nothing else.
+- **The logo below 200px wide** loses its hairline THE and MACHINE. 200px is
+  the default; the phone header goes to 156px, and 136px under 400px.
+  `public/favicon.svg` is a simplified 8-tooth gear, because the full gear
+  turns into a blob at 16px.
+
+## Components
+
+`src/components/`, twelve so far against a ceiling of fourteen. A page that
+seems to need another one usually needs a variant of an existing one.
+
+Logo · Header · Footer · Button · Section · Hero · Machine · Card (variants:
+path, symptom, engagement) · BioBlock · Placeholder · MethodCallout · CtaBand
+
+## Content that does not exist yet
+
+- **`<Placeholder needs="…">`** marks anything missing: bios, career proof,
+  portraits. It is visible, honest about being unfinished, and never filled
+  with invented names, numbers or quotes.
+- **`npm run launch-check`** builds the site and fails while any placeholder,
+  any broken internal link, or the noindex tag remains. It is the to-do list
+  for launch.
+- **`src/site.ts` `LAUNCHED`** stays false until launch-check passes. While it
+  is false, every page carries noindex, so a preview cannot be indexed with
+  placeholders on it.
 
 ## Still open
 
-Engagement names · launch scope · booking tool · the look (mockups pending)
-· bios and career proof · Path B label.
+Bios and career results (from Andrew and Tarren) · final engagement and method
+names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
+(working: Startups) · email addresses on the domain.
 
 ## Rules both briefs agree on
 
@@ -80,10 +129,19 @@ Engagement names · launch scope · booking tool · the look (mockups pending)
 - **No newsletter pop-up and no chat widget** at launch.
 - **No stock language:** unlock, supercharge, 10x, secret weapon, bespoke,
   innovative solutions, holistic synergies, end-to-end.
+- **No spatial metaphors** for the framework: never "inside-out", "outside-in"
+  or similar. Revenue and margin need no help.
+- **Never a 2x2.** Revenue and margin are two inputs to one machine, not four
+  quadrants.
 
 ## Working rules
 
 - Astro is on v7, which is newer than most training data. Check
   `node_modules/astro/` and the dev server's warnings before relying on a
   convention from memory.
-- Every page must build and pass `npm run check` before it is pushed.
+- Every change must pass `npm run build` and `npm run check` before it is
+  pushed.
+- **Fonts:** Astro's `google` provider needs `fonts.google.com`, which the
+  cloud build environment blocks, and the `npm` provider still fetches files
+  from a CDN. The `local` provider pointing at files in `node_modules` needs no
+  network at all, so builds are reproducible anywhere.

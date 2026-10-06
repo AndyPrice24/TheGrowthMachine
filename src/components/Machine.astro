@@ -1,0 +1,75 @@
+---
+/*
+ * The signature moment: revenue and margin both feed one mechanism, and profit
+ * comes out. Two inputs, one output, read left to right. Never a 2x2.
+ *
+ * The gear is the logo's own gear, the one sanctioned use of it outside the
+ * logo. It turns, and the lines flow, as the figure scrolls through view. With
+ * reduced motion it is a still picture that says the same thing.
+ */
+---
+
+<figure class="machine" role="img" aria-label="Revenue and margin both feed one machine, and profit comes out the other side.">
+  <svg viewBox="0 0 520 240" aria-hidden="true" focusable="false">
+    <text x="0" y="34">REVENUE</text>
+    <text x="0" y="226">MARGIN</text>
+    <text x="520" y="100" text-anchor="end">PROFIT</text>
+    <path class="flow" d="M0 54 H140 C205 54 222 106 256 113" />
+    <path class="flow" d="M0 186 H140 C205 186 222 134 256 127" />
+    <path class="flow out" d="M346 120 H506" />
+    <path class="tip" d="M500 112 L510 120 L500 128" />
+    <g transform="translate(300 120) scale(0.52)">
+      <use href="#tgm-gear" class="gear"></use>
+    </g>
+  </svg>
+</figure>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const figures = [...document.querySelectorAll<HTMLElement>(".machine")];
+  let queued = false;
+
+  function update() {
+    queued = false;
+    const vh = window.innerHeight || 800;
+    for (const fig of figures) {
+      const gear = fig.querySelector<SVGElement>(".gear");
+      const flows = fig.querySelectorAll<SVGPathElement>(".flow");
+      if (reduce.matches) {
+        if (gear) gear.style.transform = "";
+        flows.forEach((f) => (f.style.strokeDashoffset = ""));
+        continue;
+      }
+      const r = fig.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+      if (gear) gear.style.transform = `rotate(${(p * 360).toFixed(1)}deg)`;
+      flows.forEach((f) => (f.style.strokeDashoffset = String(-(p * 160).toFixed(1))));
+    }
+  }
+
+  if (figures.length) {
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    reduce.addEventListener("change", queue);
+    update();
+  }
+</script>
+
+<style>
+  .machine { width: 100%; max-width: 560px; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  text { font-family: var(--f-label); font-size: 14px; letter-spacing: 0.3em; fill: currentColor; }
+  .flow { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-dasharray: 7 9; }
+  .out { stroke: var(--torch); }
+  .tip { fill: none; stroke: var(--torch); stroke-width: 2.5; stroke-linecap: square; }
+  .gear { fill: var(--torch); }
+  @media (max-width: 720px) {
+    text { font-size: 19px; }
+  }
+</style>

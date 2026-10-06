@@ -1,0 +1,43 @@
+---
+/*
+ * Marks content that does not exist yet: bios, career proof, portraits.
+ * Deliberately visible, never disguised as finished content, and never filled
+ * with invented names, numbers or quotes.
+ *
+ * Every instance carries data-placeholder, and `npm run launch-check` fails
+ * while any remain in the build. A placeholder that reaches the live site is
+ * a release bug.
+ */
+interface Props {
+  /** What belongs here, and who it comes from. */
+  needs: string;
+}
+
+const { needs } = Astro.props;
+---
+
+<div class="placeholder" data-placeholder={needs}>
+  <span class="tag">To come</span>
+  <span>{needs}</span>
+</div>
+
+<style>
+  .placeholder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 12px;
+    padding: 14px 16px;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: var(--step-small);
+  }
+  .tag {
+    font-family: var(--f-label);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.72rem;
+    color: var(--fg);
+  }
+</style>

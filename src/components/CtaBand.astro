@@ -1,0 +1,34 @@
+---
+/*
+ * The closing qualifier: one provocative question, one action.
+ */
+import Button from "./Button.astro";
+
+interface Props {
+  title: string;
+  href: string;
+  action: string;
+}
+
+const { title, href, action } = Astro.props;
+---
+
+<section class="cta on-cream">
+  <div class="wrap inner">
+    <h2 class="display h2">{title}</h2>
+    <div class="side">
+      <Button href={href}>{action}</Button>
+      <p class="note"><slot /></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta { padding-block: var(--section-pad); }
+  .inner { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 32px 64px; align-items: end; }
+  .side { display: grid; gap: 14px; justify-items: start; }
+  .note { font-size: var(--step-small); color: var(--muted); max-width: 26em; }
+  @media (max-width: 760px) {
+    .inner { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

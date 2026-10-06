@@ -1,0 +1,57 @@
+---
+/*
+ * One card, three uses:
+ *   path        the homepage fork. The whole card is the link.
+ *   symptom     a commercial symptom and its consequence. Not a link.
+ *   engagement  one of the three engagements, with its named principle.
+ * A fourth use is a variant here, not a new component.
+ */
+interface Props {
+  variant: "path" | "symptom" | "engagement";
+  title: string;
+  kicker?: string;
+  href?: string;
+  cta?: string;
+  principle?: string;
+}
+
+const { variant, title, kicker, href, cta, principle } = Astro.props;
+const Tag = variant === "path" && href ? "a" : "article";
+---
+
+<Tag class:list={["card", variant]} href={Tag === "a" ? href : undefined}>
+  {kicker && <p class="kicker label label--plain">{kicker}</p>}
+  {variant === "symptom"
+    ? <p class="title display">{title}</p>
+    : <h3 class="title display h3">{title}</h3>}
+  <div class="body"><slot /></div>
+  {principle && <p class="principle">“{principle}”</p>}
+  {cta && (
+    variant === "path"
+      ? <span class="go">{cta} <span aria-hidden="true">→</span></span>
+      : href && <a class="go link" href={href}>{cta} <span aria-hidden="true">→</span></a>
+  )}
+</Tag>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(24px, 3vw, 40px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+  }
+  a.card { transition: border-color 0.2s; }
+  a.card:hover { border-color: var(--torch); }
+  .kicker { color: var(--muted); }
+  .body { color: var(--muted); max-width: 30em; display: grid; gap: 12px; }
+  .principle { font-weight: 600; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
+  .go { margin-top: auto; padding-top: 10px; font-weight: 600; display: inline-flex; gap: 8px; align-self: flex-start; }
+
+  .symptom { border-width: 1px 0 0; border-radius: 0; padding: 20px 0 0; gap: 10px; }
+  .symptom .title { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.45rem); line-height: 1.15; letter-spacing: -0.015em; }
+</style>

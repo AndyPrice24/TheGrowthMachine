@@ -1,0 +1,60 @@
+---
+/*
+ * The stacked lockup. The wordmark takes the surrounding text colour; the gear
+ * is always torch. Both come from the sprite in the base layout, so the path
+ * data is in the page once however many logos it shows.
+ *
+ * Motion: one turn on page load (`spin`), two teeth when its link is hovered
+ * or focused. Nothing continuous: a spinning icon in a header reads as loading.
+ * Keep it at 200px wide or more where possible; below that the hairline
+ * THE and MACHINE turn grey.
+ */
+import { LOGO_VIEWBOX, GEAR_CENTRE } from "./logo-paths";
+
+interface Props {
+  width?: number;
+  spin?: boolean;
+  /** True when a parent already names it, such as a link labelled "home". */
+  decorative?: boolean;
+}
+
+const { width = 200, spin = false, decorative = false } = Astro.props;
+const height = Math.round((width * 528) / 1409);
+---
+
+<svg
+  class="logo"
+  viewBox={LOGO_VIEWBOX}
+  width={width}
+  height={height}
+  role={decorative ? undefined : "img"}
+  aria-label={decorative ? undefined : "The Growth Machine"}
+  aria-hidden={decorative ? "true" : undefined}
+  focusable="false"
+>
+  <use href="#tgm-wordmark" class="wordmark"></use>
+  <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
+    <g class="turn">
+      <use href="#tgm-gear" class:list={["gear", { spin }]}></use>
+    </g>
+  </g>
+</svg>
+
+<style>
+  .logo { display: block; height: auto; overflow: visible; }
+  .wordmark { fill: currentColor; }
+  .gear { fill: var(--torch); }
+  .turn { transition: transform 0.6s var(--ease-out); }
+  :global(a:hover) > .logo .turn,
+  :global(a:focus-visible) > .logo .turn { transform: rotate(60deg); }
+  .spin { animation: gear-load 1.6s var(--ease-gear) both; }
+  @keyframes gear-load {
+    from { transform: rotate(-360deg); }
+    to { transform: rotate(0deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spin { animation: none; }
+    :global(a:hover) > .logo .turn,
+    :global(a:focus-visible) > .logo .turn { transform: none; }
+  }
+</style>

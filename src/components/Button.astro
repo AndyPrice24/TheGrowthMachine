@@ -1,0 +1,34 @@
+---
+/*
+ * The one button. Torch ground, ink text (5.2:1), on either surface.
+ * It is always a link: every action on this site goes somewhere.
+ */
+interface Props {
+  href: string;
+  size?: "md" | "sm";
+}
+
+const { href, size = "md" } = Astro.props;
+---
+
+<a class:list={["btn", size]} href={href}><slot /></a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--torch);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-weight: 600;
+    line-height: 1.1;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: filter 0.2s;
+    white-space: nowrap;
+  }
+  .btn:hover { filter: brightness(1.07); }
+  .md { font-size: 1rem; padding: 15px 22px; }
+  .sm { font-size: 0.9rem; padding: 10px 14px; }
+</style>

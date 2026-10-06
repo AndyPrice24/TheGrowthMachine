@@ -1,0 +1,32 @@
+---
+/*
+ * A full-bleed band. Sections alternate ink and cream down the page; that
+ * rhythm is the layout's structure, so every section declares its tone.
+ */
+interface Props {
+  tone: "ink" | "cream";
+  id?: string;
+  label?: string;
+  title?: string;
+}
+
+const { tone, id, label, title } = Astro.props;
+---
+
+<section class:list={["section", `on-${tone}`]} id={id}>
+  <div class="wrap inner">
+    {(label || title) && (
+      <header class="head">
+        {label && <p class="label">{label}</p>}
+        {title && <h2 class="display h2">{title}</h2>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section { padding-block: var(--section-pad); }
+  .inner { display: grid; gap: clamp(28px, 4vw, 48px); }
+  .head { display: grid; gap: 20px; max-width: 900px; }
+</style>
