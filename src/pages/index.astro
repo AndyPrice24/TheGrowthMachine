@@ -5,18 +5,20 @@
  *   2 The reframe     revenue and margin; applies to both buyers, so before the fork
  *   3 The fork        self-select in about four seconds
  *   4 The problem     the seat you need and cannot justify full-time
- *   5 How we work     one way in, two ways to continue
- *   6 Who you get     high, because two named operators are the proof a method lacks
- *   7 Track record    career results until client results exist
+ *   5 How we work     the method: what comes in, four stages, what comes out
+ *   6 Ways to work    how the method is bought: one way in, two ways to continue
+ *   7 Who you get     two named operators and their track record, above any
+ *                     client proof, because they are the proof a method lacks
  *   8 Qualifier       capacity is limited; say so, then book
  *
- * Copy is a working draft, refined with Andrew and Tarren.
+ * Sections alternate ink and cream. Copy is a working draft, refined with
+ * Andrew and Tarren.
  */
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Section from "../components/Section.astro";
 import Machine from "../components/Machine.astro";
-import MethodCallout from "../components/MethodCallout.astro";
+import Process from "../components/Process.astro";
 import Card from "../components/Card.astro";
 import BioBlock from "../components/BioBlock.astro";
 import Placeholder from "../components/Placeholder.astro";
@@ -59,10 +61,10 @@ import Button from "../components/Button.astro";
         </div>
       </div>
     </div>
-    <MethodCallout name="Find the leak, then the lever.">
-      Most fractional executives only work one side. Between the two of us we have run both, so the deep dive ranks
-      everything by what it costs you, wherever it sits.
-    </MethodCallout>
+    <p class="pairing">
+      Most fractional executives only work one side. Between the two of us we have run both, so we rank everything by
+      what it costs you, wherever it sits.
+    </p>
   </Section>
 
   <Section tone="ink" label="Start where you are" title="Which sounds like you?">
@@ -114,7 +116,15 @@ import Button from "../components/Button.astro";
     </div>
   </Section>
 
-  <Section tone="ink" id="how-we-work" label="How we work" title="One way in. Two ways to continue.">
+  <Section tone="ink" id="how-we-work" label="How we work" title="Find the leak, then the lever.">
+    <p class="lede">
+      The same four stages on every engagement, in the same order. The first is the deep dive. The last is making sure
+      the business no longer needs us.
+    </p>
+    <Process />
+  </Section>
+
+  <Section tone="cream" id="ways-to-work" label="Ways to work with us" title="One way in. Two ways to continue.">
     <p class="lede">
       Every engagement starts with a paid deep dive. What happens next depends on what it finds, and the decision is
       yours.
@@ -169,11 +179,7 @@ import Button from "../components/Button.astro";
     </div>
   </Section>
 
-  <Section
-    tone="cream"
-    label="Who you actually get"
-    title="Two senior operators. No juniors, no handoff."
-  >
+  <Section tone="ink" label="Who you actually get" title="Two senior operators. No juniors, no handoff.">
     <p class="lede">
       The people you meet are the people doing the work. The problem decides who leads, and most clients get both of
       us.
@@ -197,15 +203,15 @@ import Button from "../components/Button.astro";
         </p>
       </BioBlock>
     </div>
+    <div class="record">
+      <h3 class="display h3">Before The Growth Machine.</h3>
+      <p class="muted">
+        What we have done in our own careers, labelled as exactly that. Client results replace this as soon as there
+        are results we are allowed to publish.
+      </p>
+      <Placeholder needs="Career results from Andrew and Tarren, written as problem, action, result, with numbers only where they can be stood behind" />
+    </div>
     <p><a class="link" href="/who-we-are">Meet Andrew and Tarren <span aria-hidden="true">→</span></a></p>
-  </Section>
-
-  <Section tone="ink" label="Track record" title="Before The Growth Machine.">
-    <p class="lede">
-      What we have done in our own careers, labelled as exactly that. Client results replace this as soon as there are
-      results we are allowed to publish.
-    </p>
-    <Placeholder needs="Career results from Andrew and Tarren, written as problem, action, result, with numbers only where they can be stood behind" />
   </Section>
 
   <CtaBand
@@ -224,6 +230,7 @@ import Button from "../components/Button.astro";
   .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
   .side p { max-width: 32em; }
   .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
+  .pairing { border-top: 1px solid var(--line); padding-top: 24px; color: var(--muted); max-width: 44em; }
 
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
@@ -237,6 +244,8 @@ import Button from "../components/Button.astro";
   .bench .muted { max-width: 44em; }
 
   .bios { gap: 40px; }
+  .record { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 28px; }
+  .record .muted { max-width: 40em; }
 
   @media (max-width: 900px) {
     .grid-3 { grid-template-columns: minmax(0, 1fr); }

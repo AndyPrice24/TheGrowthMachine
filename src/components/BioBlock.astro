@@ -31,8 +31,9 @@ const initials = name.split(" ").map((n) => n[0]).join("");
   .portrait {
     aspect-ratio: 4 / 5;
     max-width: 100%;
-    background: var(--ink);
-    color: var(--cream);
+    /* Inverse of whichever surface it sits on. */
+    background: var(--fg);
+    color: var(--bg);
     border-radius: var(--radius);
     display: grid;
     place-items: center;

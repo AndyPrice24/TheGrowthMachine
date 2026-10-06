@@ -1,0 +1,196 @@
+---
+/*
+ * The method as a picture: what comes in, the four stages, what comes out.
+ * Live text throughout, so it is readable on a phone, indexable and editable.
+ *
+ * The logo's gear runs along the stages like a pinion on a rack: it travels
+ * with the reader's scroll and turns exactly as far as it has rolled. Each
+ * stage lights as the gear reaches it. With reduced motion, or without
+ * JavaScript, every stage is shown lit and nothing moves.
+ *
+ * Problems are grouped under revenue and margin so the graphic carries the
+ * site's central argument rather than contradicting it.
+ */
+const inputs = {
+  Revenue: ["Stalled growth", "Unclear go-to-market", "Weak acquisition", "Low conversion"],
+  Margin: ["Margin leakage", "Rising fees and costs", "Wasted spend", "Founder dependency"],
+};
+
+const stages = [
+  { name: "Diagnose", text: "Find the real constraints." },
+  { name: "Design", text: "Build the growth system." },
+  { name: "Execute", text: "Implement and optimise." },
+  { name: "Embed", text: "Make it stick in the business." },
+];
+---
+
+<div class="process" data-process>
+  <div class="in">
+    <p class="label label--plain cap">What comes in</p>
+    <div class="groups">
+      {Object.entries(inputs).map(([side, items]) => (
+        <div class="group">
+          <p class="side display">{side}</p>
+          <ul>{items.map((item) => <li>{item}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="track">
+    <div class="rail" aria-hidden="true"><div class="rail-fill"></div></div>
+    <ol class="stages">
+      {stages.map((s, i) => (
+        <li class="stage">
+          <span class="node" aria-hidden="true"></span>
+          <span class="num">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="name display">{s.name}</h3>
+          <p class="text">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+    <svg class="pinion" viewBox="-80 -80 160 160" aria-hidden="true" focusable="false">
+      <use href="#tgm-gear"></use>
+    </svg>
+  </div>
+
+  <div class="out">
+    <p class="label label--plain cap">What comes out</p>
+    <p class="sum display">
+      <span>More revenue</span><span class="op" aria-hidden="true">+</span><span>better margins</span><span class="op" aria-hidden="true">=</span><span class="profit">profit</span>
+    </p>
+    <p class="left">And left behind: the systems and the team to keep it going without us.</p>
+  </div>
+</div>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-process]")) {
+    const track = root.querySelector<HTMLElement>(".track")!;
+    const rail = root.querySelector<HTMLElement>(".rail")!;
+    const fill = root.querySelector<HTMLElement>(".rail-fill")!;
+    const pinion = root.querySelector<SVGSVGElement>(".pinion")!;
+    const stageEls = [...root.querySelectorAll<HTMLElement>(".stage")];
+    const nodes = stageEls.map((s) => s.querySelector<HTMLElement>(".node")!);
+
+    let first = { x: 0, y: 0 };
+    let last = { x: 0, y: 0 };
+    let vertical = false;
+    let length = 0;
+    let queued = false;
+
+    const centre = (el: HTMLElement) => {
+      const t = track.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return { x: r.left - t.left + r.width / 2, y: r.top - t.top + r.height / 2 };
+    };
+
+    function measure() {
+      first = centre(nodes[0]);
+      last = centre(nodes[nodes.length - 1]);
+      vertical = Math.abs(last.y - first.y) > Math.abs(last.x - first.x);
+      length = Math.hypot(last.x - first.x, last.y - first.y);
+      Object.assign(rail.style, {
+        left: `${first.x}px`,
+        top: `${first.y}px`,
+        width: vertical ? "2px" : `${length}px`,
+        height: vertical ? `${length}px` : "2px",
+      });
+      root.dataset.axis = vertical ? "y" : "x";
+    }
+
+    function progress() {
+      if (reduce.matches) return 1;
+      const vh = window.innerHeight || 800;
+      const t = track.getBoundingClientRect();
+      if (vertical) {
+        // The gear follows the reader's eye line down the list.
+        return (vh * 0.55 - (t.top + first.y)) / Math.max(1, last.y - first.y);
+      }
+      return (vh * 0.8 - t.top) / (vh * 0.45);
+    }
+
+    function update() {
+      queued = false;
+      const p = Math.max(0, Math.min(1, progress()));
+      const x = first.x + (last.x - first.x) * p;
+      const y = first.y + (last.y - first.y) * p;
+      const radius = pinion.getBoundingClientRect().width / 2 || 22;
+      const turned = ((p * length) / radius) * (180 / Math.PI);
+      pinion.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${turned.toFixed(1)}deg)`;
+      fill.style.transform = vertical ? `scaleY(${p})` : `scaleX(${p})`;
+      stageEls.forEach((s, i) => s.classList.toggle("is-reached", p >= i / (stageEls.length - 1) - 0.02));
+    }
+
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    root.classList.add("is-live");
+    measure();
+    update();
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", () => { measure(); queue(); });
+    reduce.addEventListener("change", queue);
+    document.fonts?.ready.then(() => { measure(); update(); });
+  }
+</script>
+
+<style>
+  .process { display: grid; gap: clamp(36px, 5vw, 56px); }
+  .cap { color: var(--muted); }
+
+  /* ---- in ---- */
+  .in { display: grid; gap: 16px; }
+  .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px clamp(24px, 4vw, 56px); }
+  .group { display: grid; gap: 10px; align-content: start; }
+  .side { font-size: 1.3rem; }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+  .group li { padding-block: 10px; border-top: 1px solid var(--line); font-weight: 500; }
+
+  /* ---- track ---- */
+  .track { position: relative; }
+  .stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .stage { position: relative; display: grid; gap: 8px; align-content: start; padding-top: 52px; }
+  .node {
+    position: absolute; top: 12px; left: 2px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--torch); border: 2px solid var(--torch);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .num { font-family: var(--f-label); font-size: var(--step-label); letter-spacing: 0.1em; color: var(--torch); transition: color 0.3s; }
+  .name { font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.9rem); }
+  .text { color: var(--muted); max-width: 16em; }
+
+  .rail { position: absolute; display: none; margin: -1px 0 0 -1px; background: var(--line); pointer-events: none; }
+  .rail-fill { position: absolute; inset: 0; background: var(--torch); transform-origin: 0 0; }
+  .pinion { position: absolute; left: 0; top: 0; width: 46px; height: 46px; fill: var(--torch); display: none; pointer-events: none; }
+
+  /* Enhanced: unreached stages wait, the rail and the travelling gear appear. */
+  .is-live .rail, .is-live .pinion { display: block; }
+  .is-live .stage:not(.is-reached) .node { background: var(--bg); border-color: var(--line); }
+  .is-live .stage:not(.is-reached) .num { color: var(--muted); }
+
+  /* ---- out ---- */
+  .out { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .sum { font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.6rem); line-height: 1.1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .op { color: var(--muted); }
+  .profit { color: var(--torch); }
+  .left { color: var(--muted); max-width: 34em; }
+
+  /* ---- phone: one column, the gear runs down the left ---- */
+  @media (max-width: 760px) {
+    .group ul { grid-template-columns: minmax(0, 1fr); }
+    .stages { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+    .stage { padding-top: 0; padding-left: 52px; }
+    .node { top: 4px; left: 12px; }
+    .text { max-width: none; }
+  }
+  @media (max-width: 480px) {
+    .groups { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
