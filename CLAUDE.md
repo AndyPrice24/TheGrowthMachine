@@ -102,15 +102,19 @@ logo itself.
   - Text baked into the render is too small to read on a phone, so every step
     is also live text beside or beneath it. The image has full alt text.
   - It is cut out of its studio backdrop (`brand/tools/cutout-machine.py`,
-    originals in `brand/machine/`) so the machine and its rubble sit on the
-    page rather than in a picture box. The render was lit for a light room
-    and its few trapped specks of backdrop vanish on cream, so How we work is
-    a cream section that continues the problem section, separated by a
-    hairline. That is the one break in the ink/cream alternation.
-  - As the reader scrolls, the machine fades back and one part at a time
-    comes forward at full strength with a torch outline; the render itself
-    never moves. Reduced motion, or no JavaScript: no pinning, no fading,
-    every step listed.
+    then `brand/tools/machine-glows.py`; originals in `brand/machine/`) so the
+    machine and its rubble sit on the page rather than in a picture box. The
+    clean-up removes trapped backdrop between rubble and cables, so it holds
+    on ink as well as cream. How we work is currently a cream section that
+    continues the problem section, separated by a hairline; Andrew is
+    comparing it on ink.
+  - As the reader scrolls, the machine fades back and one phase at a time is
+    backlit in torch red: every slab and piece of rubble going in, then each
+    stage panel, then each result block. Each glow follows the object's own
+    outline, and the four stage outlines are identical so every stage looks
+    the same when it lights. No boxes. The render itself never moves.
+    Reduced motion, or no JavaScript: no pinning, no fading, every step
+    listed.
 - **The logo below 200px wide** loses its hairline THE and MACHINE. 200px is
   the default; the phone header goes to 156px, and 136px under 400px.
   `public/favicon.svg` is a simplified 8-tooth gear, because the full gear

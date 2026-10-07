@@ -111,5 +111,5 @@ for name, floor_y in cfg.items():
     F = np.clip(F, 0, 255)
 
     out = np.dstack([F.astype(np.uint8), (a * 255).astype(np.uint8)])
-    cv2.imwrite(f'src/assets/machine/machine-{name}.png', out)
+    cv2.imwrite(f'brand/machine/machine-{name}-cutout.png', out)
     print(name, 'foreground share', round(float(a.mean()), 3))

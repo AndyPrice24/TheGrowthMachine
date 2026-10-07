@@ -32,9 +32,17 @@ Andrew's `growth-machine-desktop.svg` and `growth-machine-mobile.svg`.
 and `numpy`). It takes the backdrop that reaches the image edge as background,
 treats drawn outlines as walls so light plates stay solid, cuts everything
 below the floor line, and removes the grey fringe from soft edges. Two plates
-at the very top are declared solid by hand in that script. The rest of those
-files (glow overlays, a spinning cog) was not used: `MachineRun` replaces it
-with an aligned spotlight, a vector nameplate carrying the real logo, and live
-text. To change the render, replace the PNG; the build regenerates the web
-formats. If the composition moves, the plate, rivet and region coordinates at
-the top of `MachineRun.astro` must move with it.
+at the very top are declared solid by hand in that script. It writes
+`brand/machine/machine-<art>-cutout.png`.
+
+`tools/machine-glows.py` then finishes the job. It removes the last trapped
+backdrop from between the rubble and the cables (so the cut-out holds on a
+dark page), writes the final `src/assets/machine/machine-<art>.png`, and writes
+one backlit layer per phase, `glow-<art>-<phase>.png`: the torch glow hugging
+that phase's objects, with the objects redrawn on top. Slab, stage-panel and
+result-block outlines in that script are measured by hand from the originals.
+
+The rest of Andrew's SVGs (glow overlays, a spinning cog) was not used. To
+change the render, replace the original PNG and run both scripts. If the
+composition moves, the outlines in `machine-glows.py` and the plate and rivet
+coordinates at the top of `MachineRun.astro` must move with it.
