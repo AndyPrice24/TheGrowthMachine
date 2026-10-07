@@ -97,24 +97,30 @@ logo itself.
     WebP at two widths each (70 to 260KB), loaded lazily, so the page does not
     pay for them until the reader is near.
   - The render's nameplate carried an AI approximation of the logo. A vector
-    nameplate with the real logo is laid over it, and its gear turns as the
-    machine runs.
+    nameplate with the real logo is laid over it as a warm-lit lightbox: lit
+    from the first moment the machine is seen, never faded with the rest of
+    it. Its gear turns as the machine runs.
   - Text baked into the render is too small to read on a phone, so every step
     is also live text beside or beneath it. The image has full alt text.
   - It is cut out of its studio backdrop (`brand/tools/cutout-machine.py`,
     then `brand/tools/machine-glows.py`; originals in `brand/machine/`) so the
     machine and its rubble sit on the page rather than in a picture box. The
-    clean-up removes trapped backdrop between rubble and cables, so it holds
-    on ink as well as cream. How we work is currently a cream section that
-    continues the problem section, separated by a hairline; Andrew is
-    comparing it on ink.
-  - As the reader scrolls, the machine fades back and one phase at a time is
-    backlit in torch red: every slab and piece of rubble going in, then each
-    stage panel, then each result block. Each glow follows the object's own
-    outline, and the four stage outlines are identical so every stage looks
-    the same when it lights. No boxes. The render itself never moves.
-    Reduced motion, or no JavaScript: no pinning, no fading, every step
-    listed.
+    rubble that ran off the render's left edge is mirrored outward and thinned
+    so it crumbles away; the tank hub cut by the right edge fades out.
+  - **How we work is an ink section (decided 7 October 2026).** Andrew chose
+    black over cream: the red backlights read as real light.
+  - As the reader scrolls, the machine fades back (to 60%, raised from 50% at
+    Andrew's request) and one phase at a time is backlit in torch red: every
+    slab and piece of rubble going in, then each stage panel. Each glow
+    follows the object's own outline, and the four stage outlines are
+    identical so every stage looks the same when it lights. No boxes.
+  - What comes out is a timed sequence: the chart's arrow climbs at a steady
+    rate, each bar lights as the arrow passes it, and each result block lights
+    with its bar (bottom up on desktop, left to right on a phone), the fifth
+    with the arrow's tip. All stay lit; scrolling back and in again replays it.
+    Positions and timings come from `src/assets/machine/manifest.json`.
+  - The render itself never moves. Reduced motion, or no JavaScript: no
+    pinning, no fading, every step listed.
 - **The logo below 200px wide** loses its hairline THE and MACHINE. 200px is
   the default; the phone header goes to 156px, and 136px under 400px.
   `public/favicon.svg` is a simplified 8-tooth gear, because the full gear

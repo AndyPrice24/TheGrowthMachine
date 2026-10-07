@@ -5,70 +5,108 @@
  * The render is cut out of its studio backdrop, so the machine and its rubble
  * sit directly on the page. As the reader scrolls, the machine fades back and
  * one phase at a time comes forward, backlit in torch red: every slab and
- * piece of rubble going in, then each stage panel, then each result block.
- * Live text beside it says what that phase does. The
- * nameplate is redrawn in vector over the render, with the real logo, because
- * the render's own lettering was an AI approximation of it; its gear turns as
- * the machine runs.
+ * piece of rubble going in, then each stage panel. Live text beside it says
+ * what that phase does.
+ *
+ * What comes out is a short sequence rather than a single light: the chart's
+ * arrow climbs, each bar lights as the arrow passes it, and each result block
+ * lights with its bar (bottom up on desktop, left to right on a phone), the
+ * last with the arrow's tip. Everything then stays lit.
+ *
+ * The nameplate is redrawn in vector over the render, with the real logo,
+ * because the render's own lettering was an AI approximation of it. It is a
+ * lightbox: lit warm from the first moment the machine is seen, and never
+ * faded with the rest of the machine. Its gear turns as the machine runs.
  *
  * The render pins in place and the scroll drives the sequence. Desktop shows
  * the landscape render with the steps beside it; a phone shows the portrait
  * render, sized to fit the screen, with the current step beneath it.
- * Reduced motion or no JavaScript: no pinning, no spotlight, every step listed.
+ * Reduced motion or no JavaScript: no pinning, no fading, every step listed.
  *
- * The cut-outs and the backlit layers in src/assets/machine/ are made from
- * Andrew's originals in brand/machine/ by brand/tools/cutout-machine.py and
- * brand/tools/machine-glows.py. The build turns them into AVIF and WebP (with
- * transparency) at two widths each, loaded lazily.
+ * Every image in src/assets/machine/ is made from Andrew's originals in
+ * brand/machine/ by brand/tools/cutout-machine.py and machine-glows.py, which
+ * also writes manifest.json: the canvas size, its padding, and where and when
+ * each piece of the result sequence appears. The build turns the images into
+ * AVIF and WebP with transparency, loaded lazily.
  */
 import { getImage } from "astro:assets";
 import desktopSrc from "../assets/machine/machine-desktop.png";
 import mobileSrc from "../assets/machine/machine-mobile.png";
-
-const glowFiles = import.meta.glob<{ default: ImageMetadata }>("../assets/machine/glow-*.png", { eager: true });
-const glowSrc = (kind: string, phase: string) => glowFiles[`../assets/machine/glow-${kind}-${phase}.png`].default;
+import manifest from "../assets/machine/manifest.json";
 import { LOGO_VIEWBOX, GEAR_CENTRE } from "./logo-paths";
 
+type Kind = "desktop" | "mobile";
+type Box = number[];
+
+const pngs = import.meta.glob<{ default: ImageMetadata }>("../assets/machine/*.png", { eager: true });
+const png = (name: string) => pngs[`../assets/machine/${name}.png`].default;
+
+/** Seconds for the arrow to climb from its tail to its tip. */
+const SEQ_SECONDS = 2.4;
+
+// Positions below are in the original render's pixels; the manifest's offset
+// maps them onto the padded canvas.
 const art = {
   desktop: {
     src: desktopSrc,
-    widths: [960, 1448],
-    size: [1448, 1086],
+    widths: [960, manifest.desktop.size[0]],
+    sizes: "(min-width: 761px) 75vw, 100vw",
     plate: { x: 545, y: 515, w: 364, h: 143, r: 7 },
     logo: { cx: 727.5, cy: 586.5, w: 267 },
     rivets: [[559, 532], [895, 532], [559, 642], [895, 642]],
     rivet: 7,
+    halo: 16,
     floor: { y: 952, x0: 30, x1: 1440 },
   },
   mobile: {
     src: mobileSrc,
-    widths: [640, 941],
-    size: [941, 1672],
+    widths: [640, manifest.mobile.size[0]],
+    sizes: "100vw",
     plate: { x: 272, y: 652, w: 390, h: 158, r: 8 },
     logo: { cx: 475.5, cy: 732.5, w: 281 },
     rivets: [[302, 674], [646, 674], [302, 796], [646, 796]],
     rivet: 8,
+    halo: 18,
     floor: { y: 1588, x0: 50, x1: 890 },
   },
 };
 
-const sources = async (a: (typeof art)["desktop"]) => ({
-  avif: await getImage({ src: a.src, format: "avif", widths: a.widths }),
-  webp: await getImage({ src: a.src, format: "webp", widths: a.widths }),
+const formats = async (src: ImageMetadata, widths?: number[]) => ({
+  avif: await getImage({ src, format: "avif", widths }),
+  webp: await getImage({ src, format: "webp", widths }),
 });
-const desktop = await sources(art.desktop);
-const mobile = await sources(art.mobile);
 
-const PHASES = ["in", "s1", "s2", "s3", "s4", "out"] as const;
-const glows = async (kind: "desktop" | "mobile") =>
-  Promise.all(
-    PHASES.map(async (phase) => ({
-      phase,
-      avif: await getImage({ src: glowSrc(kind, phase), format: "avif", widths: art[kind].widths }),
-      webp: await getImage({ src: glowSrc(kind, phase), format: "webp", widths: art[kind].widths }),
-    })),
-  );
-const glowLayers = { desktop: await glows("desktop"), mobile: await glows("mobile") };
+const PHASES = ["in", "s1", "s2", "s3", "s4"] as const;
+
+async function build(kind: Kind) {
+  const m = manifest[kind];
+  const [W, H] = m.size;
+  const pct = ([x, y, w, h]: Box) =>
+    `left: ${((x / W) * 100).toFixed(3)}%; top: ${((y / H) * 100).toFixed(3)}%; width: ${((w / W) * 100).toFixed(3)}%; height: ${((h / H) * 100).toFixed(3)}%`;
+  const { box, span } = m.seq.arrow;
+  // The wipe runs past the arrow's tip to uncover the glow beyond it, at the same speed.
+  const tail = ((span[0] - box[0]) / box[2]) * 100;
+  const arrowSeconds = (SEQ_SECONDS * (box[0] + box[2] - span[0])) / (span[1] - span[0]);
+  return {
+    W,
+    H,
+    ox: m.offset[0],
+    oy: m.offset[1],
+    base: await formats(art[kind].src, art[kind].widths),
+    glows: await Promise.all(PHASES.map(async (phase) => ({ phase, ...(await formats(png(`glow-${kind}-${phase}`), art[kind].widths)) }))),
+    arrow: {
+      ...(await formats(png(`seq-${kind}-arrow`))),
+      style: `${pct(box)}; --wipe-from: ${(100 - tail).toFixed(2)}%; --wipe-time: ${arrowSeconds.toFixed(2)}s`,
+    },
+    items: await Promise.all(
+      m.seq.items.map(async (it) => ({
+        ...(await formats(png(`seq-${kind}-${it.name}`))),
+        style: `${pct(it.box)}; --at: ${(it.at * SEQ_SECONDS).toFixed(2)}s`,
+      })),
+    ),
+  };
+}
+const built = { desktop: await build("desktop"), mobile: await build("mobile") };
 
 const steps = [
   { id: "in", k: "In", name: "What comes in", text: "Stalled growth, an unclear go-to-market, weak acquisition, low conversion, margin leakage, founder dependency. Most businesses arrive with two or three." },
@@ -80,64 +118,78 @@ const steps = [
 ];
 
 const LOGO_ASPECT = 528 / 1409;
+const ALT =
+  "The Growth Machine drawn as a machine. Problems go in at one end: stalled growth, unclear go-to-market, weak acquisition, low conversion, margin leakage and founder dependency. They pass through four stages, diagnose, design, execute and embed, and come out as more revenue, better margins, better systems, a stronger team and scalable growth.";
 ---
 
 <div class="machine-run" data-machine-run>
   <div class="pin">
     {(["desktop", "mobile"] as const).map((kind) => {
       const a = art[kind];
-      const img = kind === "desktop" ? desktop : mobile;
-      const [W, H] = a.size;
+      const b = built[kind];
+      const { W, H, ox, oy } = b;
       const lw = a.logo.w;
       const lh = lw * LOGO_ASPECT;
+      const floorX = ((a.floor.x0 + a.floor.x1) / 2 + ox) / W;
       return (
         <figure
           class:list={["frame", `frame--${kind}`]}
-          style={`aspect-ratio: ${W} / ${H}; --floor-y: ${((a.floor.y / H) * 100).toFixed(2)}%; --floor-x: ${(((a.floor.x0 + a.floor.x1) / 2 / W) * 100).toFixed(2)}%; --floor-w: ${(((a.floor.x1 - a.floor.x0) / W) * 100).toFixed(2)}%`}
+          style={`aspect-ratio: ${W} / ${H}; --ar: ${(W / H).toFixed(4)}; --floor-y: ${(((a.floor.y + oy) / H) * 100).toFixed(2)}%; --floor-x: ${(floorX * 100).toFixed(2)}%; --floor-w: ${(((a.floor.x1 - a.floor.x0) / W) * 100).toFixed(2)}%`}
         >
           <div class="floor" aria-hidden="true"></div>
-          <div class="layer base">
-            <picture>
-              <source type="image/avif" srcset={img.avif.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
-              <source type="image/webp" srcset={img.webp.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
-              <img
-                src={img.webp.src}
-                width={W}
-                height={H}
-                loading="lazy"
-                decoding="async"
-                alt="The Growth Machine drawn as a machine. Problems go in at one end: stalled growth, unclear go-to-market, weak acquisition, low conversion, margin leakage and founder dependency. They pass through four stages, diagnose, design, execute and embed, and come out as more revenue, better margins, better systems, a stronger team and scalable growth."
-              />
-            </picture>
-            <svg class="overlay" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
-              <defs>
-                <radialGradient id={`plate-${kind}`} cx="50%" cy="45%" r="70%">
-                  <stop offset="0" style="stop-color: var(--plate-hi)" />
-                  <stop offset="0.6" style="stop-color: var(--plate-mid)" />
-                  <stop offset="1" style="stop-color: var(--plate-lo)" />
-                </radialGradient>
-                <radialGradient id={`rivet-${kind}`} cx="35%" cy="35%" r="70%">
-                  <stop offset="0" style="stop-color: var(--rivet-hi)" />
-                  <stop offset="1" style="stop-color: var(--rivet-lo)" />
-                </radialGradient>
-              </defs>
-              <rect class="plate" x={a.plate.x} y={a.plate.y} width={a.plate.w} height={a.plate.h} rx={a.plate.r} fill={`url(#plate-${kind})`} />
-              {a.rivets.map(([x, y]) => <circle cx={x} cy={y} r={a.rivet} fill={`url(#rivet-${kind})`} class="rivet" />)}
-              <svg x={a.logo.cx - lw / 2} y={a.logo.cy - lh / 2} width={lw} height={lh} viewBox={LOGO_VIEWBOX} overflow="visible">
-                <use href="#tgm-wordmark" class="plate-word"></use>
-                <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
-                  <use href="#tgm-gear" class="plate-gear"></use>
-                </g>
-              </svg>
-            </svg>
-          </div>
-          {glowLayers[kind].map((g) => (
-            <picture class="glow" data-phase={g.phase} aria-hidden="true">
-              <source type="image/avif" srcset={g.avif.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
-              <source type="image/webp" srcset={g.webp.srcSet.attribute} sizes={kind === "desktop" ? "(min-width: 761px) 75vw, 100vw" : "100vw"} />
+          <picture class="layer base">
+            <source type="image/avif" srcset={b.base.avif.srcSet.attribute} sizes={a.sizes} />
+            <source type="image/webp" srcset={b.base.webp.srcSet.attribute} sizes={a.sizes} />
+            <img src={b.base.webp.src} width={W} height={H} loading="lazy" decoding="async" alt={ALT} />
+          </picture>
+
+          {b.glows.map((g) => (
+            <picture class="layer glow" data-phase={g.phase} aria-hidden="true">
+              <source type="image/avif" srcset={g.avif.srcSet.attribute} sizes={a.sizes} />
+              <source type="image/webp" srcset={g.webp.srcSet.attribute} sizes={a.sizes} />
               <img src={g.webp.src} width={W} height={H} loading="lazy" decoding="async" alt="" />
             </picture>
           ))}
+
+          <div class="seq" aria-hidden="true">
+            <picture class="seq-arrow" style={b.arrow.style}>
+              <source type="image/avif" srcset={b.arrow.avif.src} />
+              <img src={b.arrow.webp.src} loading="lazy" decoding="async" alt="" />
+            </picture>
+            {b.items.map((it) => (
+              <picture class="seq-item" style={it.style}>
+                <source type="image/avif" srcset={it.avif.src} />
+                <img src={it.webp.src} loading="lazy" decoding="async" alt="" />
+              </picture>
+            ))}
+          </div>
+
+          <svg class="layer lightbox" viewBox={`${-ox} ${-oy} ${W} ${H}`} aria-hidden="true" focusable="false">
+            <defs>
+              <radialGradient id={`face-${kind}`} cx="50%" cy="48%" r="72%">
+                <stop offset="0" style="stop-color: var(--lightbox-hi)" />
+                <stop offset="0.55" style="stop-color: var(--lightbox-mid)" />
+                <stop offset="1" style="stop-color: var(--lightbox-lo)" />
+              </radialGradient>
+              <radialGradient id={`rivet-${kind}`} cx="35%" cy="35%" r="70%">
+                <stop offset="0" style="stop-color: var(--rivet-hi)" />
+                <stop offset="1" style="stop-color: var(--rivet-lo)" />
+              </radialGradient>
+              <filter id={`halo-${kind}`} x="-40%" y="-80%" width="180%" height="260%">
+                <feGaussianBlur stdDeviation={a.halo} />
+              </filter>
+            </defs>
+            <rect class="halo" x={a.plate.x - 4} y={a.plate.y - 4} width={a.plate.w + 8} height={a.plate.h + 8} rx={a.plate.r + 4} filter={`url(#halo-${kind})`} />
+            <rect class="plate" x={a.plate.x} y={a.plate.y} width={a.plate.w} height={a.plate.h} rx={a.plate.r} fill={`url(#face-${kind})`} />
+            <rect class="diffuser" x={a.plate.x + 5} y={a.plate.y + 5} width={a.plate.w - 10} height={a.plate.h - 10} rx={Math.max(2, a.plate.r - 3)} />
+            {a.rivets.map(([x, y]) => <circle cx={x} cy={y} r={a.rivet} fill={`url(#rivet-${kind})`} class="rivet" />)}
+            <svg x={a.logo.cx - lw / 2} y={a.logo.cy - lh / 2} width={lw} height={lh} viewBox={LOGO_VIEWBOX} overflow="visible">
+              <use href="#tgm-wordmark" class="plate-word"></use>
+              <g transform={`translate(${GEAR_CENTRE.x} ${GEAR_CENTRE.y})`}>
+                <use href="#tgm-gear" class="plate-gear"></use>
+              </g>
+            </svg>
+          </svg>
         </figure>
       );
     })}
@@ -160,34 +212,35 @@ const LOGO_ASPECT = 528 / 1409;
 
   for (const root of document.querySelectorAll<HTMLElement>("[data-machine-run]")) {
     const stepEls = [...root.querySelectorAll<HTMLElement>(".step")];
+    const frames = [...root.querySelectorAll<HTMLElement>(".frame")];
     const order = stepEls.map((s) => s.dataset.step!);
     let queued = false;
     let current = -1;
 
     const frame = () => root.querySelector<HTMLElement>(phone.matches ? ".frame--mobile" : ".frame--desktop")!;
 
-    function place(f: HTMLElement, id: string) {
-      f.querySelectorAll<HTMLElement>(".glow").forEach((g) => g.classList.toggle("is-on", g.dataset.phase === id));
-    }
-
     function activate(i: number) {
       if (i === current) return;
       current = i;
+      const id = order[i];
       stepEls.forEach((s, j) => s.classList.toggle("is-active", j === i));
-      place(frame(), order[i]);
+      for (const f of frames) {
+        f.querySelectorAll<HTMLElement>(".glow").forEach((g) => g.classList.toggle("is-on", g.dataset.phase === id));
+        // Re-entering what comes out replays its sequence from the start.
+        f.classList.toggle("is-running", id === "out");
+      }
     }
 
     function update() {
       queued = false;
       const vh = window.innerHeight || 800;
-      const f = frame();
       // The render is pinned: the scroll through the section drives the sequence.
       const r = root.getBoundingClientRect();
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)));
       const i = Math.min(order.length - 1, Math.floor(p * order.length));
       activate(i);
       const turn = `rotate(${(p * 720).toFixed(1)}deg)`;
-      f.querySelectorAll<SVGElement>(".plate-gear").forEach((g) => (g.style.transform = turn));
+      frame().querySelectorAll<SVGElement>(".plate-gear").forEach((g) => (g.style.transform = turn));
     }
 
     const queue = () => {
@@ -205,11 +258,12 @@ const LOGO_ASPECT = 528 / 1409;
         update();
       } else {
         stepEls.forEach((s) => s.classList.remove("is-active"));
+        frames.forEach((f) => f.classList.remove("is-running"));
       }
     }
 
     window.addEventListener("scroll", () => root.classList.contains("is-live") && queue(), { passive: true });
-    window.addEventListener("resize", () => root.classList.contains("is-live") && (current = -1, queue()));
+    window.addEventListener("resize", () => root.classList.contains("is-live") && queue());
     reduce.addEventListener("change", start);
     phone.addEventListener("change", start);
     start();
@@ -221,11 +275,9 @@ const LOGO_ASPECT = 528 / 1409;
   .pin { display: grid; gap: 28px; }
 
   .frame { position: relative; margin: 0; width: 100%; }
-  .layer { position: absolute; inset: 0; }
-  .layer picture, .layer img { display: block; width: 100%; height: 100%; }
-  .layer img { object-fit: contain; }
-  .glow { position: absolute; inset: 0; display: none; opacity: 0; transition: opacity 0.45s var(--ease-out); }
-  .glow img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+  .layer img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .glow { display: none; opacity: 0; transition: opacity 0.45s var(--ease-out); }
   /* a soft contact shadow, so the machine stands on the page rather than floating */
   .floor {
     position: absolute;
@@ -236,14 +288,34 @@ const LOGO_ASPECT = 528 / 1409;
     background: radial-gradient(closest-side, var(--shade), transparent);
     opacity: 0.55;
   }
-  .overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-  .plate { stroke: var(--plate-edge); stroke-width: 1.5; }
+
+  /* ---- the lightbox nameplate: always lit, never faded ---- */
+  .lightbox { pointer-events: none; overflow: visible; }
+  .halo { fill: var(--lightbox-glow); opacity: 0.7; }
+  .plate { stroke: var(--lightbox-edge); stroke-width: 1.5; }
+  .diffuser { fill: none; stroke: var(--lightbox-hi); stroke-width: 3; opacity: 0.6; }
   .rivet { stroke: var(--rivet-lo); stroke-width: 1; }
   .plate-word { fill: var(--ink); }
   .plate-gear { fill: var(--torch); }
 
-  .frame--mobile { display: none; }
+  /* ---- what comes out: arrow climbs, bars and blocks light in step ---- */
+  .seq { position: absolute; inset: 0; display: none; pointer-events: none; }
+  .seq picture { position: absolute; display: block; }
+  .seq img { display: block; width: 100%; height: 100%; }
+  .seq-item { opacity: 0; }
+  .seq-arrow { clip-path: inset(0 100% 0 0); }
+  .is-running .seq-item { animation: light-on 0.35s var(--ease-out) var(--at) both; }
+  .is-running .seq-arrow { animation: climb var(--wipe-time) linear both; }
+  @keyframes light-on {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes climb {
+    from { clip-path: inset(0 var(--wipe-from) 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
 
+  .frame--mobile { display: none; }
 
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
   .step { display: grid; gap: 6px; }
@@ -267,7 +339,7 @@ const LOGO_ASPECT = 528 / 1409;
     /* The machine is the centrepiece: let it run wider than the text column. */
     .machine-run { margin-inline: calc((100% - min(100vw - 2 * var(--gutter), 1400px)) / 2); }
     .is-live .pin { grid-template-columns: minmax(0, 1fr) minmax(240px, 280px); align-items: center; gap: clamp(24px, 3vw, 48px); }
-    .is-live .frame--desktop { width: min(100%, calc((100svh - 40px) * 1448 / 1086)); justify-self: center; }
+    .is-live .frame--desktop { width: min(100%, calc((100svh - 40px) * var(--ar))); justify-self: center; }
     .is-live .step { opacity: 0.38; }
     .is-live .step .text { display: none; }
     .is-live .step.is-active { opacity: 1; }
@@ -279,15 +351,16 @@ const LOGO_ASPECT = 528 / 1409;
     .frame--desktop { display: none; }
     .frame--mobile { display: block; }
     .is-live .pin { gap: 14px; justify-items: center; align-content: start; padding-top: 16px; }
-    .is-live .frame--mobile { width: min(100%, calc((100svh - 190px) * 941 / 1672)); }
+    .is-live .frame--mobile { width: min(100%, calc((100svh - 190px) * var(--ar))); }
     .is-live .steps { min-height: 130px; align-content: start; width: 100%; }
     .is-live .step:not(.is-active) { display: none; }
   }
 
   /* live: the machine fades back, the active phase comes forward backlit */
-  .is-live .base { opacity: 0.5; filter: grayscale(0.35); transition: opacity 0.4s var(--ease-out); }
+  .is-live .base { opacity: 0.6; filter: grayscale(0.35); transition: opacity 0.4s var(--ease-out); }
   .is-live .glow { display: block; }
   .is-live .glow.is-on { opacity: 1; }
+  .is-live .seq { display: block; }
 
   @media (prefers-reduced-motion: reduce) {
     .glow { transition: none; }

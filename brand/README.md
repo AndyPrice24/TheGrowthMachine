@@ -35,14 +35,23 @@ below the floor line, and removes the grey fringe from soft edges. Two plates
 at the very top are declared solid by hand in that script. It writes
 `brand/machine/machine-<art>-cutout.png`.
 
-`tools/machine-glows.py` then finishes the job. It removes the last trapped
-backdrop from between the rubble and the cables (so the cut-out holds on a
-dark page), writes the final `src/assets/machine/machine-<art>.png`, and writes
-one backlit layer per phase, `glow-<art>-<phase>.png`: the torch glow hugging
-that phase's objects, with the objects redrawn on top. Slab, stage-panel and
-result-block outlines in that script are measured by hand from the originals.
+`tools/machine-glows.py` then finishes the job and writes everything the site
+uses into `src/assets/machine/`:
+
+- `machine-<art>.png`: the final cut-out, with the last trapped backdrop
+  removed, the rubble that ran off the desktop render's left edge mirrored
+  outward and thinned so it crumbles away, and the canvas padded so no glow
+  is clipped.
+- `glow-<art>-<phase>.png`: one backlit layer per phase (in, s1 to s4).
+- `seq-<art>-<item>.png`: the result sequence (arrow, four bars, five blocks),
+  each cropped to its own glow.
+- `manifest.json`: canvas sizes, padding, and every sequence item's box and
+  timing, read by `MachineRun.astro`.
+
+Every outline in that script (slabs, stage panels, result blocks, bars) is
+measured by hand from the originals.
 
 The rest of Andrew's SVGs (glow overlays, a spinning cog) was not used. To
 change the render, replace the original PNG and run both scripts. If the
-composition moves, the outlines in `machine-glows.py` and the plate and rivet
-coordinates at the top of `MachineRun.astro` must move with it.
+composition moves, the outlines in `machine-glows.py` and the nameplate and
+rivet coordinates at the top of `MachineRun.astro` must move with it.

@@ -8,14 +8,12 @@ interface Props {
   id?: string;
   label?: string;
   title?: string;
-  /** Continues the section before it in the same tone, separated by a hairline. */
-  continues?: boolean;
 }
 
-const { tone, id, label, title, continues = false } = Astro.props;
+const { tone, id, label, title } = Astro.props;
 ---
 
-<section class:list={["section", `on-${tone}`, { continues }]} id={id}>
+<section class:list={["section", `on-${tone}`]} id={id}>
   <div class="wrap inner">
     {(label || title) && (
       <header class="head">
@@ -29,8 +27,6 @@ const { tone, id, label, title, continues = false } = Astro.props;
 
 <style>
   .section { padding-block: var(--section-pad); }
-  .continues { padding-top: 0; }
-  .continues .inner { border-top: 1px solid var(--line); padding-top: var(--section-pad); }
   .inner { display: grid; gap: clamp(28px, 4vw, 48px); }
   .head { display: grid; gap: 20px; max-width: 900px; }
 </style>

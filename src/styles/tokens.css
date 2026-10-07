@@ -24,16 +24,16 @@
   --line-on-cream: #DCD7CB;
   --line-on-ink: #2B2B2B;
 
-  /* illustration: the nameplate laid over the machine render, and the dim
-     around the spotlight. Used by MachineRun only. */
-  --plate-hi: #F0E8DC;
-  --plate-mid: #E2D7C8;
-  --plate-lo: #C9BBA8;
-  --plate-edge: #9C8F7E;
+  /* illustration: the lightbox nameplate laid over the machine render, its
+     rivets, and the machine's contact shadow. Used by MachineRun only. */
+  --lightbox-hi: #FFFAF0;
+  --lightbox-mid: #FCEBD0;
+  --lightbox-lo: #F1D3A4;
+  --lightbox-edge: #A8875E;
+  --lightbox-glow: #FFC07A;
   --rivet-hi: #EDEDED;
   --rivet-lo: #555555;
   --shade: color-mix(in srgb, var(--ink) 60%, transparent);
-  --glow: color-mix(in srgb, var(--torch) 55%, transparent);
 
   /* type: the families come from the Astro fonts config */
   --f-display: var(--font-display), "Arial Black", sans-serif;
