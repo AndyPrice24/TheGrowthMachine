@@ -11,7 +11,9 @@
  * What comes out is a short sequence rather than a single light: the chart's
  * arrow climbs, each bar lights as the arrow passes it, and each result block
  * lights with its bar (bottom up on desktop, left to right on a phone), the
- * last with the arrow's tip. Everything then stays lit.
+ * last with the arrow's tip. Everything then stays lit. The page holds at the
+ * end of the section until the sequence has played once, so nobody scrolls
+ * past it half-finished; it is never held with reduced motion.
  *
  * The nameplate is redrawn in vector over the render, with the real logo,
  * because the render's own lettering was an AI approximation of it. It is a
@@ -43,6 +45,8 @@ const png = (name: string) => pngs[`../assets/machine/${name}.png`].default;
 
 /** Seconds for the arrow to climb from its tail to its tip. */
 const SEQ_SECONDS = 2.4;
+/** Seconds each bar or block takes to come on. Matches the light-on animation. */
+const LIGHT_ON_SECONDS = 0.35;
 
 // Positions below are in the original render's pixels; the manifest's offset
 // maps them onto the padded canvas.
@@ -87,7 +91,9 @@ async function build(kind: Kind) {
   // The wipe runs past the arrow's tip to uncover the glow beyond it, at the same speed.
   const tail = ((span[0] - box[0]) / box[2]) * 100;
   const arrowSeconds = (SEQ_SECONDS * (box[0] + box[2] - span[0])) / (span[1] - span[0]);
+  const lastItem = Math.max(...m.seq.items.map((it) => it.at)) * SEQ_SECONDS + LIGHT_ON_SECONDS;
   return {
+    seqMs: Math.round(Math.max(arrowSeconds, lastItem) * 1000),
     W,
     H,
     ox: m.offset[0],
@@ -134,6 +140,7 @@ const ALT =
       return (
         <figure
           class:list={["frame", `frame--${kind}`]}
+          data-seq-ms={b.seqMs}
           style={`aspect-ratio: ${W} / ${H}; --ar: ${(W / H).toFixed(4)}; --floor-y: ${(((a.floor.y + oy) / H) * 100).toFixed(2)}%; --floor-x: ${(floorX * 100).toFixed(2)}%; --floor-w: ${(((a.floor.x1 - a.floor.x0) / W) * 100).toFixed(2)}%`}
         >
           <div class="floor" aria-hidden="true"></div>
@@ -217,6 +224,42 @@ const ALT =
     let queued = false;
     let current = -1;
 
+    // Holding the page at the end of the section until what comes out has
+    // played once. Armed only by arriving from above, so a reload further
+    // down the page is never pulled back up.
+    let armed = false;
+    let played = false;
+    let holdY: number | null = null;
+    let holdTimer = 0;
+
+    const endOfSection = () => root.getBoundingClientRect().top + window.scrollY + root.offsetHeight - (window.innerHeight || 800);
+
+    function hold() {
+      if (!armed || played || holdY !== null) return;
+      holdY = Math.round(endOfSection());
+      const ms = Number(frame().dataset.seqMs || 3000) + 150;
+      holdTimer = window.setTimeout(release, ms);
+      if (window.scrollY > holdY) window.scrollTo(0, holdY);
+    }
+
+    function release() {
+      window.clearTimeout(holdTimer);
+      if (holdY !== null) played = true;
+      holdY = null;
+    }
+
+    const blocked = (down: boolean) => holdY !== null && down && window.scrollY >= holdY - 1;
+    window.addEventListener("wheel", (e) => blocked(e.deltaY > 0) && e.preventDefault(), { passive: false });
+    let touchY = 0;
+    window.addEventListener("touchstart", (e) => (touchY = e.touches[0].clientY), { passive: true });
+    window.addEventListener("touchmove", (e) => blocked(touchY - e.touches[0].clientY > 0) && e.preventDefault(), { passive: false });
+    window.addEventListener("keydown", (e) => {
+      const down = ["ArrowDown", "PageDown", "End", " ", "Spacebar"].includes(e.key) && !e.shiftKey;
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (blocked(down)) e.preventDefault();
+    });
+
     const frame = () => root.querySelector<HTMLElement>(phone.matches ? ".frame--mobile" : ".frame--desktop")!;
 
     function activate(i: number) {
@@ -229,6 +272,8 @@ const ALT =
         // Re-entering what comes out replays its sequence from the start.
         f.classList.toggle("is-running", id === "out");
       }
+      if (id === "out") hold();
+      else armed = true;
     }
 
     function update() {
@@ -239,6 +284,8 @@ const ALT =
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)));
       const i = Math.min(order.length - 1, Math.floor(p * order.length));
       activate(i);
+      // a scrollbar drag or a fling can still get past: put it back
+      if (holdY !== null && window.scrollY > holdY + 1) window.scrollTo(0, holdY);
       const turn = `rotate(${(p * 720).toFixed(1)}deg)`;
       frame().querySelectorAll<SVGElement>(".plate-gear").forEach((g) => (g.style.transform = turn));
     }
@@ -254,6 +301,7 @@ const ALT =
       const live = !reduce.matches;
       root.classList.toggle("is-live", live);
       current = -1;
+      release();
       if (live) {
         update();
       } else {
@@ -304,6 +352,7 @@ const ALT =
   .seq img { display: block; width: 100%; height: 100%; }
   .seq-item { opacity: 0; }
   .seq-arrow { clip-path: inset(0 100% 0 0); }
+  /* 0.35s is LIGHT_ON_SECONDS above */
   .is-running .seq-item { animation: light-on 0.35s var(--ease-out) var(--at) both; }
   .is-running .seq-arrow { animation: climb var(--wipe-time) linear both; }
   @keyframes light-on {

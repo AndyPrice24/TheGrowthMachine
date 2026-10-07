@@ -22,6 +22,10 @@ Writes to src/assets/machine/:
   manifest.json          canvas sizes, the padding, and every sequence item's
                          box and timing, for MachineRun.astro
 
+Slabs, stage panels and result boards are kept fully solid, and on desktop
+each result board's icon and text are recentred between its rivets (the
+render drew most of them off-centre).
+
 Each backlit layer is a torch-red glow hugging the object's outline, with the
 object redrawn on top, so the glow reads as light from behind it even where
 it sits inside the machine body.
@@ -80,6 +84,11 @@ ART = {
         "pad": {"l": 74, "t": 0, "r": 30, "b": 0},
         "extend_left": 44,
         "fade_right": (720, 830, 18),
+        # Result boards: the render drew most of them off-centre. Their rivets
+        # sit symmetrically about x=1291, so each board's icon-and-text is
+        # recentred on that line, and shrunk only if wider than the room
+        # between the rivets.
+        "recentre": {"centre": 1291, "room": 224, "x": (1177, 1420)},
     },
     "mobile": {
         "slabs": [
@@ -104,6 +113,7 @@ ART = {
         "pad": {"l": 0, "t": 0, "r": 0, "b": 0},
         "extend_left": 0,
         "fade_right": None,
+        "recentre": None,
     },
 }
 
@@ -168,6 +178,93 @@ def backdrop(img, zone, slabs):
     return back.astype(bool)
 
 
+def recentre_boards(rgb, src, boards, cfg):
+    """Centre each result board's icon and text between its rivets.
+
+    Content is everything dark (lettering) or red (icon) on the board. It is
+    lifted off with its soft edges, the plate behind it is rebuilt from a
+    smooth fit of the plate around it, and the content is put back centred,
+    scaled down only if it would not fit the room between the rivets.
+    Rivets are left untouched. Everything is read from the original render
+    (`src`): outside the cut-out the cut-out's colours are undefined, and the
+    lettering on two boards runs right up to the board's edge.
+    """
+    img = rgb.copy()
+    src = src.astype(np.float32)
+    lum = cv2.cvtColor(np.clip(src, 0, 255).astype(np.uint8), cv2.COLOR_BGR2GRAY).astype(np.float32)
+    redness = src[..., 2] - src[..., 1]
+    x0, x1 = cfg["x"]
+    for (bx, by, bw, bh) in boards:
+        dark = lum < 110
+        red = redness > 60
+        n, lab, st, _ = cv2.connectedComponentsWithStats((dark | red).astype(np.uint8)[by:by + bh, x0:x1], connectivity=8)
+        content = np.zeros(lum.shape, bool)
+        rivets = np.zeros(lum.shape, bool)
+        for i in range(1, n):
+            cx, cy, cw, ch, area = st[i]
+            if cw <= 11 and ch <= 11 and (cx + x0 > x1 - 20 or cx + x0 < x0 + 4):
+                rivets[by:by + bh, x0:x1] |= lab == i  # a rivet at the board's corners
+            elif ch >= 9 and area >= 40 and cw < 120 and ch < bh - 10:
+                content[by:by + bh, x0:x1] |= lab == i
+        ys, xs = np.where(content)
+        cy0, cy1, cxa, cxb = ys.min() - 4, ys.max() + 5, xs.min(), xs.max() + 1
+        rivets = cv2.dilate(rivets.astype(np.uint8), np.ones((7, 7), np.uint8)).astype(bool)
+        sl = (slice(cy0, cy1), slice(x0, x1))
+        R, L, C, V = src[sl], lum[sl], content[sl], rivets[sl]
+        keep = img[sl]
+        near = cv2.dilate(C.astype(np.uint8), np.ones((7, 7), np.uint8)).astype(bool)
+
+        # the plate behind: a smooth surface fitted to the plate around the content
+        yy, xx = np.mgrid[0:R.shape[0], 0:R.shape[1]].astype(np.float32)
+        u, v = xx / R.shape[1], yy / R.shape[0]
+        basis = np.stack([np.ones_like(u), u, v, u * u, v * v, u * v], -1)
+        sample = ~near & ~V & (L > 150)
+        plate = np.zeros_like(R)
+        for ch in range(3):
+            coef, *_ = np.linalg.lstsq(basis[sample], R[..., ch][sample], rcond=None)
+            plate[..., ch] = basis @ coef
+        plate_l = cv2.cvtColor(np.clip(plate, 0, 255).astype(np.uint8), cv2.COLOR_BGR2GRAY).astype(np.float32)
+
+        # the content with its soft edges, unmixed from the plate
+        grow = cv2.dilate(C.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool)
+        a_dark = np.clip((plate_l - L) / np.maximum(plate_l - 25, 1), 0, 1)
+        a_red = np.clip((R[..., 2] - R[..., 1] - 25) / 140, 0, 1)
+        a = np.maximum(a_dark, a_red) * grow
+        # The lettering and icons are flat colours: ink, and the icon red.
+        # Using those (rather than unmixing every soft edge pixel) keeps the
+        # edges clean when the content moves.
+        ink = np.median(R[(a_dark > 0.85) & C], axis=0)
+        is_red = (a_red > 0.6) & C
+        red_ink = np.median(R[is_red], axis=0) if is_red.any() else ink
+        red_w = cv2.dilate((a_red > a_dark).astype(np.uint8) * grow.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(np.float32)
+        F = ink[None, None, :] * (1 - red_w[..., None]) + red_ink[None, None, :] * red_w[..., None]
+
+        # clean plate: content areas rebuilt from the scratched plate around
+        # them (inpainting keeps the local tone a smooth fit would lose)
+        hole = (cv2.dilate(grow.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool) & ~V).astype(np.uint8)
+        clean = cv2.inpaint(np.clip(R, 0, 255).astype(np.uint8), hole, 9, cv2.INPAINT_TELEA).astype(np.float32)
+        rng = np.random.default_rng(by)
+        grain = cv2.GaussianBlur(rng.normal(0, 3.0, hole.shape).astype(np.float32), (0, 0), 0.7)
+        clean = np.where(hole[..., None] > 0, clean + grain[..., None], clean)
+
+        # move it: centre on the rivet axis, scale down only if too wide
+        width = cxb - cxa
+        s = min(1.0, cfg["room"] / width)
+        mid_src = (cxa + cxb) / 2 - x0
+        mid_dst = cfg["centre"] - x0
+        cy = R.shape[0] / 2
+        M = np.float32([[s, 0, mid_dst - s * mid_src], [0, s, cy - s * cy]])
+        size = (R.shape[1], R.shape[0])
+        a2 = cv2.warpAffine(a.astype(np.float32), M, size, flags=cv2.INTER_LINEAR)
+        F2 = cv2.warpAffine(F.astype(np.float32), M, size, flags=cv2.INTER_LINEAR)
+        a2 *= ~V
+        moved = clean * (1 - a2[..., None]) + F2 * a2[..., None]
+        touched = hole.astype(bool) | (a2 > 0.01)
+        img[sl] = np.where(touched[..., None], moved, keep)
+        print(f"  board at y={by}: content {cxa}-{cxb}, centre {((cxa + cxb) / 2):.1f} -> {cfg['centre']}, scale {s:.3f}")
+    return img
+
+
 def extend_rubble(rgb, alpha, slabs, band, seed=4, keep_pow=1.2):
     """Mirror the rubble at the left edge outward, then thin it piece by piece.
 
@@ -206,6 +303,42 @@ def run(art, c):
         slabs |= rounded_mask(shape, p, 4)
     outs = [rounded_mask(shape, p, 9) for p in c["outputs"]]
     out_all = np.any(outs, axis=0)
+    stage_masks = [rounded_mask(shape, p, 0) for p in c["stages"]]
+
+    # Slabs, stage panels and result boards are solid. The cut-out treated a
+    # few light patches inside them (the counter of a C) as backdrop and
+    # punched holes the glow showed through; inside them, take the render as is.
+    objects = slabs | out_all | np.any(stage_masks, axis=0)
+    opaque = (alpha > 0.5).astype(np.uint8)
+    reach = np.zeros((H + 2, W + 2), np.uint8)
+    outside = opaque.copy()
+    cv2.floodFill(outside, reach, (0, 0), 2)
+    holes = (outside == 0) & objects  # transparent, but enclosed by the object
+    solid_objects = holes | (objects & (alpha > 0.5))
+    rgb[holes] = img[holes]
+    alpha[solid_objects] = 1.0
+
+    if c["recentre"]:
+        boards = [(p[0][0], p[0][1], p[1][0] - p[0][0], p[2][1] - p[0][1]) for p in c["outputs"]]
+        # Each board is whole: where the old lettering ran into the bevel the
+        # cut-out bit into the board's edge, so take each board's outline as
+        # the hull of its opaque pixels and fill it from the render. Done
+        # before recentring, so the lettering restored here moves with the rest.
+        left = c["recentre"]["x"][0] - 22
+        for k, (bx, by, bw, bh) in enumerate(boards):
+            band = np.zeros(shape, bool)
+            band[by + 1:by + bh - 1, left:bx + bw + 4] = True
+            pts = cv2.findNonZero(((alpha > 0.5) & band).astype(np.uint8))
+            hull = np.zeros(shape, np.uint8)
+            cv2.fillPoly(hull, [cv2.convexHull(pts)], 1)
+            fill = (hull > 0) & (alpha < 0.5)
+            rgb[fill] = img[fill]
+            alpha[hull > 0] = 1.0
+            # the light gap below each board (to the next) is backdrop
+            if k + 1 < len(boards):
+                gap_top, gap_bottom = by + bh + 1, boards[k + 1][1] - 1
+                alpha[gap_top:gap_bottom, left + 8:bx + bw + 6] = 0
+        rgb = recentre_boards(rgb, img, boards, c["recentre"])
 
     # ---- clean the cut-out: drop trapped backdrop around the rubble and cables
     zone = poly_mask(shape, c["in_zone"])
@@ -214,7 +347,7 @@ def run(art, c):
     cleaning = zone.copy()
     for z in c["clean_zones"]:
         cleaning |= poly_mask(shape, z)
-    back = backdrop(img, cleaning & ~out_all, slabs)
+    back = backdrop(img, cleaning & ~out_all & ~solid_objects, slabs)
     alpha = alpha * (1 - soft(back, 0.7))
     solid = (alpha > 0.3).astype(np.uint8)
     n, lab, stats, _ = cv2.connectedComponentsWithStats(solid, connectivity=8)
@@ -261,7 +394,7 @@ def run(art, c):
     rubble = zoneP & (A > 0.35) & ~slabsP
     phases = {"in": slabsP | rubble}
     for k, p in enumerate(c["stages"]):
-        m = pad(rounded_mask(shape, p, 0))
+        m = pad(stage_masks[k])
         phases[f"s{k + 1}"] = cv2.dilate(m.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
     so, sr = c["glow"]
     for ph, m in phases.items():
