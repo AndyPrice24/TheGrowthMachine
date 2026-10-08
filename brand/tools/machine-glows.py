@@ -11,7 +11,7 @@ Writes to src/assets/machine/:
   machine-<art>.png      the final cut-out, on a canvas padded so no glow is
                          clipped by the image edge
   glow-<art>-<phase>.png one full-canvas backlit layer per phase
-                           in     every slab and every piece of rubble
+                           in     the six problem slabs (not the rubble)
                            s1-s4  each of the four stage panels
   seq-<art>-<item>.png   the result sequence, each cropped to its own glow:
                            arrow        the chart's arrow, revealed by a wipe
@@ -26,9 +26,11 @@ Slabs, stage panels and result boards are kept fully solid, and on desktop
 each result board's icon and text are recentred between its rivets (the
 render drew most of them off-centre).
 
-Each backlit layer is a torch-red glow hugging the object's outline, with the
-object redrawn on top, so the glow reads as light from behind it even where
-it sits inside the machine body.
+Each backlit layer is a glow hugging the object's outline, with the object
+redrawn on top, so the glow reads as light from behind it even where it sits
+inside the machine body. Problems going in and results coming out are lit
+warm white, like the nameplate; the stages and the chart's arrow and bars are
+lit torch red, so red means the machine at work.
 
 The cut-out is also finished here: the last trapped studio backdrop between
 the rubble and the cables is removed so nothing light shows on a dark page;
@@ -50,12 +52,19 @@ import numpy as np
 
 TORCH = (21, 39, 255)  # BGR of #FF2715
 OUT = os.environ.get("TGM_OUT", "src/assets/machine")
-# The "in" phase: which objects light ("all" = slabs and rubble, "slabs" = the
-# problem slabs only), how strongly, and in what colour (BGR).
-IN_LIGHT = os.environ.get("TGM_IN", "all")
-IN_STRENGTH = float(os.environ.get("TGM_IN_STRENGTH", "1"))
+# Warm white, the nameplate's light. The problem slabs going in and the result
+# blocks coming out are lit with it; red is kept for the machine's own work
+# (the four stages) and the chart's arrow and bars (decided 8 October 2026,
+# after a red blaze of rubble read as alarm rather than as the brand).
+WARM = (170, 215, 255)  # BGR of #FFD7AA
+WARM_STRENGTH = 0.55
+# The "in" phase, overridable to try variants: which objects light ("slabs"
+# = the problem slabs only, "all" = slabs and rubble), how strongly, in what
+# colour (BGR), and how much the lit objects brighten.
+IN_LIGHT = os.environ.get("TGM_IN", "slabs")
+IN_STRENGTH = float(os.environ.get("TGM_IN_STRENGTH", str(WARM_STRENGTH)))
 IN_LIFT = float(os.environ.get("TGM_IN_LIFT", "1"))
-IN_COLOUR = tuple(int(v) for v in os.environ.get("TGM_IN_COLOUR", ",".join(map(str, (21, 39, 255)))).split(","))
+IN_COLOUR = tuple(int(v) for v in os.environ.get("TGM_IN_COLOUR", ",".join(map(str, WARM))).split(","))
 
 
 def rrect(x, y, w, h):
@@ -517,7 +526,8 @@ def run(art, c):
     beats.append(1.0)  # the arrow's tip
     for k, idx in enumerate(c["block_order"]):
         m = pad(outs[idx])
-        seq["items"].append({"name": f"block{k + 1}", "box": crop(glow_layer(m, RGB, A, so, sr), f"block{k + 1}"), "at": beats[k]})
+        lit = glow_layer(m, RGB, A, so, sr, strength=WARM_STRENGTH, colour=WARM)
+        seq["items"].append({"name": f"block{k + 1}", "box": crop(lit, f"block{k + 1}"), "at": beats[k]})
 
     print(art, "canvas", (PW, PH), "| backdrop px removed", int(back.sum()), "| pocket px removed", int(trapped.sum()), "| beats", beats)
     return {"size": [PW, PH], "offset": [pl, pt], "seq": seq}

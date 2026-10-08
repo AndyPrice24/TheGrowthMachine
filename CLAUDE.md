@@ -127,10 +127,15 @@ logo itself.
   - **How we work is an ink section (decided 7 October 2026).** Andrew chose
     black over cream: the red backlights read as real light.
   - As the reader scrolls, the machine fades back (to 60%, raised from 50% at
-    Andrew's request) and one phase at a time is backlit in torch red: every
-    slab and piece of rubble going in, then each stage panel. Each glow
-    follows the object's own outline, and the four stage outlines are
-    identical so every stage looks the same when it lights. No boxes.
+    Andrew's request) and one phase at a time is backlit: the six problem
+    slabs going in, then each stage panel. Each glow follows the object's own
+    outline, and the four stage outlines are identical so every stage looks
+    the same when it lights. No boxes.
+  - **Red means the machine at work (decided 8 October 2026).** The problem
+    slabs and the result blocks are lit warm white, the nameplate's light;
+    the four stages and the chart's arrow and bars are lit torch red. The
+    first version lit every piece of rubble red, and a hundred halos read as
+    an alarm rather than as the brand. The rubble is not lit at all.
   - What comes out is a timed sequence: the chart's arrow climbs at a steady
     rate, each bar lights as the arrow passes it, and each result block lights
     with its bar (bottom up on desktop, left to right on a phone), the fifth
