@@ -69,7 +69,7 @@ ART = {
             [(28, 296), (276, 344), (264, 432), (16, 384)],
             [(36, 400), (270, 420), (266, 512), (30, 494)],
             [(40, 504), (252, 508), (254, 606), (40, 604)],
-            [(40, 592), (272, 580), (282, 668), (52, 708)],
+            [(40, 592), (266, 580), (270, 664), (52, 708)],
         ],
         "outputs": [rrect(1154, 99 + round(90.75 * k), 268, 81) for k in range(5)],
         "stages": [chamfer(x, 688, 151, 210, 8) for x in (319, 516, 717, 914)],
@@ -84,6 +84,14 @@ ART = {
         "pad": {"l": 74, "t": 0, "r": 30, "b": 0},
         "extend_left": 44,
         "fade_right": (720, 830, 18),
+        # Genuinely white parts the pocket sweep must leave alone (original
+        # render coordinates): the pressure gauge face, and the small white
+        # indicator arrow beside stage 4. The nameplate is covered separately.
+        "keep_light": {"circles": [(522, 480, 40)], "boxes": [(1074, 758, 26, 26)]},
+        "nameplate": (545, 515, 364, 143),
+        # where rubble meets the frame, backdrop is too small and too tinted
+        # for the pocket test; only here, take anything near-white
+        "sliver_zones": [[(250, 560), (330, 560), (330, 790), (200, 790), (200, 700), (250, 660)]],
         # Result boards: the render drew most of them off-centre. Their rivets
         # sit symmetrically about x=1291, so each board's icon-and-text is
         # recentred on that line, and shrunk only if wider than the room
@@ -113,6 +121,9 @@ ART = {
         "pad": {"l": 0, "t": 0, "r": 0, "b": 0},
         "extend_left": 0,
         "fade_right": None,
+        "keep_light": {"circles": [(238, 647, 38)], "boxes": []},
+        "nameplate": (272, 652, 390, 158),
+        "sliver_zones": [],
         "recentre": None,
     },
 }
@@ -265,6 +276,55 @@ def recentre_boards(rgb, src, boards, cfg):
     return img
 
 
+def pockets(rgb, alpha, protect):
+    """Studio backdrop trapped inside the machine, between pipes.
+
+    The cut-out only removed backdrop it could reach from the image edge, so
+    pockets enclosed by pipework stayed. Invisible on cream, obvious on black.
+    A pocket seeds where the render is light, unsaturated and smooth over 5px,
+    after an opening wide enough to discard the thin bright streaks on chrome;
+    it then grows a few pixels into its own soft shadowed rim.
+    """
+    bgr = np.clip(rgb, 0, 255).astype(np.uint8)
+    lum = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    sat = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)[..., 1].astype(np.float32)
+    m5 = cv2.blur(lum, (5, 5))
+    s5 = np.sqrt(np.maximum(cv2.blur(lum * lum, (5, 5)) - m5 * m5, 0))
+    seed = ((alpha > 0.5) & (lum > 185) & (sat < 45) & (s5 < 5) & ~protect).astype(np.uint8)
+    seed = cv2.morphologyEx(seed, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    n, lab, st, _ = cv2.connectedComponentsWithStats(seed, connectivity=8)
+    big = np.zeros(n, bool)
+    big[1:] = st[1:, cv2.CC_STAT_AREA] >= 40
+    region = big[lab].astype(np.uint8)
+    m3 = cv2.blur(lum, (3, 3))
+    s3 = np.sqrt(np.maximum(cv2.blur(lum * lum, (3, 3)) - m3 * m3, 0))
+    rim = ((alpha > 0.05) & (lum > 140) & (sat < 60) & (s3 < 14) & ~protect).astype(np.uint8)
+    for _ in range(4):
+        region = cv2.dilate(region, np.ones((3, 3), np.uint8)) & rim
+    return region.astype(bool)
+
+
+def white_slivers(rgb, alpha, protect_tight, zone):
+    """Near-white backdrop squeezed between rubble and the machine's frame.
+
+    Too small or too tinted by the rubble's glow to pass the smoothness test
+    in `pockets`, but whiter than anything the machine itself contains outside
+    its plates and panels, which `protect_tight` covers.
+    """
+    bgr = np.clip(rgb, 0, 255).astype(np.uint8)
+    lum = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    sat = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)[..., 1].astype(np.float32)
+    white = ((alpha > 0.3) & (lum > 228) & (sat < 40) & ~protect_tight & zone).astype(np.uint8)
+    n, lab, st, _ = cv2.connectedComponentsWithStats(white, connectivity=8)
+    keep = np.zeros(n, bool)
+    keep[1:] = st[1:, cv2.CC_STAT_AREA] >= 12
+    region = keep[lab].astype(np.uint8)
+    rim = ((alpha > 0.05) & (lum > 175) & (sat < 70) & ~protect_tight & zone).astype(np.uint8)
+    for _ in range(2):
+        region = cv2.dilate(region, np.ones((3, 3), np.uint8)) & rim
+    return region.astype(bool)
+
+
 def extend_rubble(rgb, alpha, slabs, band, seed=4, keep_pow=1.2):
     """Mirror the rubble at the left edge outward, then thin it piece by piece.
 
@@ -377,6 +437,26 @@ def run(art, c):
         RGB[pt:pt + H, pl - b:pl] = ec
         A[pt:pt + H, pl - b:pl] = ea
         zoneP[pt:pt + H, :pl] = zoneP[pt:pt + H, pl:pl + 1]
+    # ---- trapped backdrop between the pipes, anywhere in the machine
+    protect = slabsP.copy()
+    for p in c["outputs"] + c["stages"]:
+        protect |= pad(rounded_mask(shape, p, 0))
+    nx, ny, nw, nh = c["nameplate"]
+    protect[ny + pt - 6:ny + pt + nh + 6, nx + pl - 6:nx + pl + nw + 6] = True
+    ax_, ay_, aw_, ah_ = c["arrow_box"]
+    protect[ay_ + pt:ay_ + pt + ah_, ax_ + pl:ax_ + pl + aw_] = True
+    for (cx, cy, r) in c["keep_light"]["circles"]:
+        cv2.circle(protect.view(np.uint8), (cx + pl, cy + pt), r, 1, -1)
+    for (bx, by, bw, bh) in c["keep_light"]["boxes"]:
+        protect[by + pt:by + pt + bh, bx + pl:bx + pl + bw] = True
+    protect_tight = cv2.dilate(protect.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
+    protect = cv2.dilate(protect.astype(np.uint8), np.ones((9, 9), np.uint8)).astype(bool)
+    sliver_zone = np.zeros((PH, PW), bool)
+    for z in c["sliver_zones"]:
+        sliver_zone |= pad(poly_mask(shape, z))
+    trapped = pockets(RGB, A, protect) | white_slivers(RGB, A, protect_tight, sliver_zone)
+    A = A * (1 - soft(trapped, 0.8))
+
     final = np.dstack([np.clip(RGB, 0, 255), np.clip(A * 255, 0, 255)]).astype(np.uint8)
     cv2.imwrite(f"{OUT}/machine-{art}.png", final)
 
@@ -431,7 +511,7 @@ def run(art, c):
         m = pad(outs[idx])
         seq["items"].append({"name": f"block{k + 1}", "box": crop(glow_layer(m, RGB, A, so, sr), f"block{k + 1}"), "at": beats[k]})
 
-    print(art, "canvas", (PW, PH), "| backdrop px removed", int(back.sum()), "| beats", beats)
+    print(art, "canvas", (PW, PH), "| backdrop px removed", int(back.sum()), "| pocket px removed", int(trapped.sum()), "| beats", beats)
     return {"size": [PW, PH], "offset": [pl, pt], "seq": seq}
 
 

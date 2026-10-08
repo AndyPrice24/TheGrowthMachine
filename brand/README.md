@@ -48,6 +48,11 @@ uses into `src/assets/machine/`:
 - `manifest.json`: canvas sizes, padding, and every sequence item's box and
   timing, read by `MachineRun.astro`.
 
+It also sweeps the whole machine for studio backdrop trapped between pipes
+(the cut-out only removed backdrop it could reach from the image edge), while
+protecting the genuinely white parts listed in its config: plates, panels,
+the gauge face, the chart arrow and the small indicator arrow.
+
 Every outline in that script (slabs, stage panels, result blocks, bars) is
 measured by hand from the originals.
 

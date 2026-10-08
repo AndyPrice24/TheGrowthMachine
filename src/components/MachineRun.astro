@@ -256,13 +256,18 @@ const ALT =
       window.clearTimeout(holdTimer);
       holdY = null;
       html.classList.remove("machine-hold");
+      html.style.paddingRight = "";
     }
 
     function enforce() {
       if (!running() || holdY === null) return;
       if (window.scrollY >= holdY - 1) {
         if (window.scrollY > holdY) window.scrollTo(0, holdY);
-        html.classList.add("machine-hold");
+        if (!html.classList.contains("machine-hold")) {
+          const bar = window.innerWidth - html.clientWidth;
+          if (bar > 0) html.style.paddingRight = `${bar}px`;
+          html.classList.add("machine-hold");
+        }
       }
     }
 
@@ -339,8 +344,9 @@ const ALT =
 </script>
 
 <style is:global>
-  html { scrollbar-gutter: stable; }
-  html.machine-hold { overflow: hidden; }
+  /* While locked, the scrollbar's width is kept as padding (set in the script)
+     so nothing shifts, and that strip is painted to match the section. */
+  html.machine-hold { overflow: hidden; background: var(--ink); }
 </style>
 
 <style>
