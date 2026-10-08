@@ -114,7 +114,12 @@ async function build(kind: Kind) {
 }
 const built = { desktop: await build("desktop"), mobile: await build("mobile") };
 
-const steps = [
+/* The words beside the machine. The artwork is shared; each audience can pass
+   its own copy for the six steps, in this order. */
+export interface StepCopy { name: string; text: string }
+interface Props { copy?: StepCopy[] }
+
+const defaultSteps = [
   { id: "in", k: "In", name: "What comes in", text: "Stalled growth, an unclear go-to-market, weak acquisition, low conversion, margin leakage, founder dependency. Most businesses arrive with two or three." },
   { id: "s1", k: "01", name: "Diagnose", text: "Find the real constraints. The deep dive ranks every problem by what it costs you, in revenue and in margin." },
   { id: "s2", k: "02", name: "Design", text: "Build the growth system: a few priorities, each with an owner, a number and a place in the order." },
@@ -122,6 +127,9 @@ const steps = [
   { id: "s4", k: "04", name: "Embed", text: "Make it stick in the business, so it keeps running when we step back." },
   { id: "out", k: "Out", name: "What comes out", text: "More revenue and better margins, with the systems and the team to keep it going." },
 ];
+const steps = Astro.props.copy
+  ? defaultSteps.map((s, i) => ({ ...s, ...Astro.props.copy![i] }))
+  : defaultSteps;
 
 const LOGO_ASPECT = 528 / 1409;
 const ALT =
