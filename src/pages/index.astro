@@ -68,10 +68,21 @@ import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
         </div>
       </div>
     </div>
-    <p class="pairing">
-      A CMO is measured on leads and a CRO on pipeline. A founder is measured on what's left. We work both sides and
-      rank everything by what it does to profit.
-    </p>
+    <div class="measures">
+      <div class="measure">
+        <p class="label">A CMO</p>
+        <p class="by display">is measured on leads.</p>
+      </div>
+      <div class="measure">
+        <p class="label">A CRO</p>
+        <p class="by display">is measured on pipeline.</p>
+      </div>
+      <div class="measure founder">
+        <p class="label">A founder</p>
+        <p class="by display">is measured on what's left.</p>
+      </div>
+    </div>
+    <p class="pairing">We work both sides and rank everything by what it does to profit.</p>
   </Section>
 
   <Section tone="ink" label="Start where you are" title="Which sounds like you?">
@@ -83,16 +94,22 @@ import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
         title="You sell online, on Amazon or into retail."
         cta="For ecommerce brands"
       >
-        <p>We look at contribution margin, acquisition cost, order value, marketplace fees and retention.</p>
+        <p>
+          We redefine who you sell to, what you offer them and how you take it to market, then line up the data,
+          channels, advertising and creative behind it. All measured by what each order actually earns.
+        </p>
       </Card>
       <Card
         variant="path"
         href="/startups"
-        kicker="Startups and scale-ups"
-        title="You need a commercial executive before you can justify one full-time."
-        cta="For startups"
+        kicker="B2B, SaaS and service businesses"
+        title="You need a CRO, CMO or GTM lead, but not full-time."
+        cta="For B2B businesses"
       >
-        <p>We look at pipeline, go-to-market, sales motion, pricing and what the board needs to see.</p>
+        <p>
+          We sharpen who you sell to and how you win them: go-to-market, pipeline, sales process and pricing, with the
+          numbers the board needs to see.
+        </p>
       </Card>
     </div>
   </Section>
@@ -238,8 +255,14 @@ import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
   .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
   .side p { max-width: 32em; }
   .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
-  /* the section's point, so it is set to be read, not as a footnote */
-  .pairing { border-top: 1px solid var(--line); padding-top: 28px; font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem); font-weight: 600; line-height: 1.4; max-width: 34em; text-wrap: balance; }
+  /* the section's point: three ways of keeping score across the full width,
+     the founder's marked, so the comparison is seen before it is read */
+  .measures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .measure { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
+  .measure.founder { border-top: 3px solid var(--torch); padding-top: 18px; }
+  .measure .by { font-size: var(--step-h3); line-height: 1.1; letter-spacing: var(--track-display); max-width: 10em; }
+  .measure:not(.founder) .by { color: var(--muted); }
+  .pairing { font-size: var(--step-lede); font-weight: 600; margin-top: -8px; }
 
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
@@ -261,5 +284,8 @@ import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
   }
   @media (max-width: 760px) {
     .reframe, .problem, .grid-2, .bench { grid-template-columns: minmax(0, 1fr); }
+    .measures { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .measure { grid-template-columns: 7.5em minmax(0, 1fr); align-items: baseline; gap: 12px; padding-block: 14px; }
+    .measure.founder { padding-top: 12px; }
   }
 </style>
