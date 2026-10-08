@@ -61,9 +61,10 @@ records the outcome. Where this file and a brief disagree, this file wins.
   for someone arriving from his email.
 - **Positioning: founders, judged by profit (decided 8 October 2026).** Both
   Andrew and Tarren have founded and run companies on their own capital. A
-  career CMO measures leads and a career CRO measures pipeline; a founder
-  measures what is left at the end. That is the lead claim, ahead of
-  seniority or headcount. The page also serves the healthy business that
+  CMO owns the market and a CRO owns the revenue; a founder owns all of it.
+  That is the lead claim, ahead of seniority or headcount. Never belittle the
+  CRO or CMO role: those are the seats being sold. The line is "we fill the
+  seat, and think like the person who owns all of it". The page also serves the healthy business that
   wants its next revenue, not only the one with leaks, so copy should not
   read purely as a repair job.
 - **Launch scope:** Home, How we work and the three engagement pages, Who we
