@@ -53,19 +53,7 @@ p, h1, h2, h3, figure { margin: 0; }
   font-size: var(--step-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
-.label::before {
-  content: "";
-  flex: none;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--torch);
-}
-.label--plain::before { display: none; }
 
 .lede { font-size: var(--step-lede); color: var(--muted); max-width: var(--measure); }
 .muted { color: var(--muted); }

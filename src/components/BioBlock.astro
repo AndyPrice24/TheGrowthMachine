@@ -20,7 +20,7 @@ const initials = name.split(" ").map((n) => n[0]).join("");
   <div class="portrait" aria-hidden="true"><span>{initials}</span></div>
   <div class="text">
     <h3 class="display h3">{name}</h3>
-    <p class="role label label--plain">{role}</p>
+    <p class="role label">{role}</p>
     <div class="summary"><slot /></div>
     {pending && <Placeholder needs={pending} />}
   </div>

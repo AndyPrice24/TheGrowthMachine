@@ -20,7 +20,7 @@ const Tag = variant === "path" && href ? "a" : "article";
 ---
 
 <Tag class:list={["card", variant]} href={Tag === "a" ? href : undefined}>
-  {kicker && <p class="kicker label label--plain">{kicker}</p>}
+  {kicker && <p class="kicker label">{kicker}</p>}
   {variant === "symptom"
     ? <p class="title display">{title}</p>
     : <h3 class="title display h3">{title}</h3>}
