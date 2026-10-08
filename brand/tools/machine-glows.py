@@ -43,12 +43,19 @@ backdrop, so no edge test separates them reliably, and the four stage panels
 must be identical so each highlight looks the same as the last.
 """
 import json
+import os
 
 import cv2
 import numpy as np
 
 TORCH = (21, 39, 255)  # BGR of #FF2715
-OUT = "src/assets/machine"
+OUT = os.environ.get("TGM_OUT", "src/assets/machine")
+# The "in" phase: which objects light ("all" = slabs and rubble, "slabs" = the
+# problem slabs only), how strongly, and in what colour (BGR).
+IN_LIGHT = os.environ.get("TGM_IN", "all")
+IN_STRENGTH = float(os.environ.get("TGM_IN_STRENGTH", "1"))
+IN_LIFT = float(os.environ.get("TGM_IN_LIFT", "1"))
+IN_COLOUR = tuple(int(v) for v in os.environ.get("TGM_IN_COLOUR", ",".join(map(str, (21, 39, 255)))).split(","))
 
 
 def rrect(x, y, w, h):
@@ -148,7 +155,7 @@ def soft(mask, r):
     return cv2.GaussianBlur(mask.astype(np.float32), (0, 0), r)
 
 
-def glow_layer(objects, rgb, alpha, sigma_outer, sigma_rim, lift=1.0):
+def glow_layer(objects, rgb, alpha, sigma_outer, sigma_rim, lift=1.0, strength=1.0, colour=None):
     """Torch glow around the objects, with the objects redrawn on top.
 
     `lift` brightens the redrawn objects, for parts that switch on rather
@@ -157,10 +164,10 @@ def glow_layer(objects, rgb, alpha, sigma_outer, sigma_rim, lift=1.0):
     obj = objects.astype(np.uint8)
     outer = cv2.GaussianBlur(cv2.dilate(obj, np.ones((5, 5), np.uint8)).astype(np.float32), (0, 0), sigma_outer)
     rim = cv2.GaussianBlur(cv2.dilate(obj, np.ones((3, 3), np.uint8)).astype(np.float32), (0, 0), sigma_rim)
-    g = 1 - (1 - np.clip(outer * 1.7, 0, 1) * 0.85) * (1 - np.clip(rim * 1.5, 0, 1) * 0.95)
+    g = (1 - (1 - np.clip(outer * 1.7, 0, 1) * 0.85) * (1 - np.clip(rim * 1.5, 0, 1) * 0.95)) * strength
     oa = alpha * soft(objects, 0.7)
     a = oa + g * (1 - oa)
-    torch = np.array(TORCH, np.float32)
+    torch = np.array(colour or TORCH, np.float32)
     col = np.clip(rgb * lift, 0, 255)
     out = (col * oa[..., None] + torch * (g * (1 - oa))[..., None]) / np.maximum(a[..., None], 1e-4)
     return np.dstack([np.clip(out, 0, 255), np.clip(a * 255, 0, 255)]).astype(np.uint8)
@@ -472,13 +479,14 @@ def run(art, c):
 
     # ---- full-canvas phases: what goes in, and the four stages
     rubble = zoneP & (A > 0.35) & ~slabsP
-    phases = {"in": slabsP | rubble}
+    phases = {"in": slabsP if IN_LIGHT == "slabs" else slabsP | rubble}
     for k, p in enumerate(c["stages"]):
         m = pad(stage_masks[k])
         phases[f"s{k + 1}"] = cv2.dilate(m.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
     so, sr = c["glow"]
     for ph, m in phases.items():
-        cv2.imwrite(f"{OUT}/glow-{art}-{ph}.png", glow_layer(m, RGB, A, so, sr))
+        kw = {"strength": IN_STRENGTH, "colour": IN_COLOUR, "lift": IN_LIFT} if ph == "in" else {}
+        cv2.imwrite(f"{OUT}/glow-{art}-{ph}.png", glow_layer(m, RGB, A, so, sr, **kw))
 
     # ---- the result sequence: arrow, bars, blocks, each cropped to its glow
     bars = [box_mask(b) for b in c["bars"]]
