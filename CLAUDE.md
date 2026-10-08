@@ -75,8 +75,11 @@ records the outcome. Where this file and a brief disagree, this file wins.
   it is a faithful likeness, so a founder meeting them on a call meets the
   people in the picture. The rule that survives: never stock photos of other
   people standing in for them, and never a likeness they have not approved.
-  The supplied file is 1536px wide, under the 3000px a full-width image wants
-  on a retina screen; replace it with a larger export when there is one. Bios
+  The file is Andrew's 2000px upscale of the 1536px original, chosen over it
+  after a side-by-side check (8 October 2026). A 3000px version would be
+  fully sharp on a large retina screen; swap it in if one is made. It is
+  encoded at quality 82: the source is already lossy, and the default
+  quality visibly smeared skin and hair. Bios
   keep the monogram placeholder until portraits are supplied.
 
 ## Design system: direction C
