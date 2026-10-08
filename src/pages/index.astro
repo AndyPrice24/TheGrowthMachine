@@ -238,7 +238,8 @@ import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
   .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
   .side p { max-width: 32em; }
   .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
-  .pairing { border-top: 1px solid var(--line); padding-top: 24px; color: var(--muted); max-width: 44em; }
+  /* the section's point, so it is set to be read, not as a footnote */
+  .pairing { border-top: 1px solid var(--line); padding-top: 28px; font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem); font-weight: 600; line-height: 1.4; max-width: 34em; text-wrap: balance; }
 
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
