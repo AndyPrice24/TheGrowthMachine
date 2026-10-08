@@ -62,9 +62,15 @@ records the outcome. Where this file and a brief disagree, this file wins.
 - **Launch scope:** Home, How we work and the three engagement pages, Who we
   are, Before you hire, and booking. The Ecommerce and Startups paths follow.
   No Insights section until four to six real articles exist.
-- **No photography exists.** Use designed placeholders (the monogram portrait
-  in `BioBlock`) until a shoot happens. Never use stock photos of other people
-  standing in for Andrew and Tarren, and never use AI likenesses of them.
+- **Photography: AI likenesses of Andrew and Tarren, by their decision.** The
+  homepage hero is an AI-synthesised photo of the two of them
+  (`src/assets/hero/andrew-and-tarren.webp`, 8 October 2026). Andrew confirmed
+  it is a faithful likeness, so a founder meeting them on a call meets the
+  people in the picture. The rule that survives: never stock photos of other
+  people standing in for them, and never a likeness they have not approved.
+  The supplied file is 1536px wide, under the 3000px a full-width image wants
+  on a retina screen; replace it with a larger export when there is one. Bios
+  keep the monogram placeholder until portraits are supplied.
 
 ## Design system: direction C
 
