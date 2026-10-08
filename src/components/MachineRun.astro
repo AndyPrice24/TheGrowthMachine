@@ -11,9 +11,9 @@
  * What comes out is a short sequence rather than a single light: the chart's
  * arrow climbs, each bar lights as the arrow passes it, and each result block
  * lights with its bar (bottom up on desktop, left to right on a phone), the
- * last with the arrow's tip. Everything then stays lit. The page holds at the
- * end of the section until the sequence has played once, so nobody scrolls
- * past it half-finished; it is never held with reduced motion.
+ * last with the arrow's tip. Everything then stays lit. Each time it plays,
+ * the page holds at the end of the section until it has finished, so nobody
+ * scrolls past it half-done; it never holds with reduced motion.
  *
  * The nameplate is redrawn in vector over the render, with the real logo,
  * because the render's own lettering was an AI approximation of it. It is a
@@ -224,31 +224,49 @@ const ALT =
     let queued = false;
     let current = -1;
 
-    // Holding the page at the end of the section until what comes out has
-    // played once. Armed only by arriving from above, so a reload further
-    // down the page is never pulled back up.
+    // Hold the page at the end of the section while what comes out plays,
+    // every time it plays. Armed only by arriving from above, so a reload
+    // further down the page is never pulled back up.
+    //
+    // Up to the end of the section the reader scrolls freely. Reaching it
+    // while the sequence is still running locks scrolling outright (overflow
+    // hidden on the root), because trackpad and touch momentum can carry past
+    // anything softer. The lock lifts the moment the sequence ends, or if the
+    // reader leaves the result phase upwards.
     let armed = false;
-    let played = false;
+    let runEnds = 0;
     let holdY: number | null = null;
     let holdTimer = 0;
+    const html = document.documentElement;
 
     const endOfSection = () => root.getBoundingClientRect().top + window.scrollY + root.offsetHeight - (window.innerHeight || 800);
+    const running = () => holdY !== null && performance.now() < runEnds;
 
-    function hold() {
-      if (!armed || played || holdY !== null) return;
-      holdY = Math.round(endOfSection());
-      const ms = Number(frame().dataset.seqMs || 3000) + 150;
-      holdTimer = window.setTimeout(release, ms);
-      if (window.scrollY > holdY) window.scrollTo(0, holdY);
-    }
-
-    function release() {
+    function beginHold() {
       window.clearTimeout(holdTimer);
-      if (holdY !== null) played = true;
-      holdY = null;
+      if (!armed) return;
+      const ms = Number(frame().dataset.seqMs || 3000) + 150;
+      runEnds = performance.now() + ms;
+      holdY = Math.round(endOfSection());
+      holdTimer = window.setTimeout(endHold, ms);
+      enforce();
     }
 
-    const blocked = (down: boolean) => holdY !== null && down && window.scrollY >= holdY - 1;
+    function endHold() {
+      window.clearTimeout(holdTimer);
+      holdY = null;
+      html.classList.remove("machine-hold");
+    }
+
+    function enforce() {
+      if (!running() || holdY === null) return;
+      if (window.scrollY >= holdY - 1) {
+        if (window.scrollY > holdY) window.scrollTo(0, holdY);
+        html.classList.add("machine-hold");
+      }
+    }
+
+    const blocked = (down: boolean) => running() && down && window.scrollY >= holdY! - 1;
     window.addEventListener("wheel", (e) => blocked(e.deltaY > 0) && e.preventDefault(), { passive: false });
     let touchY = 0;
     window.addEventListener("touchstart", (e) => (touchY = e.touches[0].clientY), { passive: true });
@@ -272,8 +290,11 @@ const ALT =
         // Re-entering what comes out replays its sequence from the start.
         f.classList.toggle("is-running", id === "out");
       }
-      if (id === "out") hold();
-      else armed = true;
+      if (id === "out") beginHold();
+      else {
+        armed = true;
+        endHold();
+      }
     }
 
     function update() {
@@ -284,8 +305,7 @@ const ALT =
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - vh)));
       const i = Math.min(order.length - 1, Math.floor(p * order.length));
       activate(i);
-      // a scrollbar drag or a fling can still get past: put it back
-      if (holdY !== null && window.scrollY > holdY + 1) window.scrollTo(0, holdY);
+      enforce();
       const turn = `rotate(${(p * 720).toFixed(1)}deg)`;
       frame().querySelectorAll<SVGElement>(".plate-gear").forEach((g) => (g.style.transform = turn));
     }
@@ -301,7 +321,7 @@ const ALT =
       const live = !reduce.matches;
       root.classList.toggle("is-live", live);
       current = -1;
-      release();
+      endHold();
       if (live) {
         update();
       } else {
@@ -317,6 +337,11 @@ const ALT =
     start();
   }
 </script>
+
+<style is:global>
+  html { scrollbar-gutter: stable; }
+  html.machine-hold { overflow: hidden; }
+</style>
 
 <style>
   .machine-run { position: relative; }

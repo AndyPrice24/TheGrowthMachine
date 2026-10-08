@@ -118,8 +118,10 @@ logo itself.
     rate, each bar lights as the arrow passes it, and each result block lights
     with its bar (bottom up on desktop, left to right on a phone), the fifth
     with the arrow's tip. All stay lit; scrolling back and in again replays it.
-    The page holds at the end of the section until it has played once (armed
-    only by arriving from above; never with reduced motion). Positions and
+    Every time it plays, the page holds at the end of the section until it
+    finishes; reaching the end mid-sequence locks scrolling outright, since
+    trackpad and touch momentum carry past anything softer. Armed only by
+    arriving from above; never with reduced motion. Positions and
     timings come from `src/assets/machine/manifest.json`.
   - On desktop the render drew most result boards' icon and text off-centre;
     `machine-glows.py` recentres each between its rivets.
