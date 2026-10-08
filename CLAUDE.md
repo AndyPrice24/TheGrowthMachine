@@ -59,6 +59,13 @@ records the outcome. Where this file and a brief disagree, this file wins.
   hiring a CRO, CMO, GTM lead or entrepreneur in residence and pitches this
   instead of a full-time hire. The site's first job is to back up that pitch
   for someone arriving from his email.
+- **Positioning: founders, judged by profit (decided 8 October 2026).** Both
+  Andrew and Tarren have founded and run companies on their own capital. A
+  career CMO measures leads and a career CRO measures pipeline; a founder
+  measures what is left at the end. That is the lead claim, ahead of
+  seniority or headcount. The page also serves the healthy business that
+  wants its next revenue, not only the one with leaks, so copy should not
+  read purely as a repair job.
 - **Launch scope:** Home, How we work and the three engagement pages, Who we
   are, Before you hire, and booking. The Ecommerce and Startups paths follow.
   No Insights section until four to six real articles exist.
@@ -171,7 +178,10 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   the one failure this site cannot recover from.
 - **Never invent credentials.** Bios, titles, companies, dates and outcomes
   come from Andrew and Tarren.
-- **Two people. Say two.** Never imply a team, a roster or a network.
+- **Two people. Never imply more.** No team, roster or network. But the
+  count does not lead: the hero photo shows two people and the copy says
+  "founders"; "two" is said where being small reads as a promise (Who you
+  actually get, the closing call to action), not in the opening.
 - **No pricing on the site.** The call is the qualifier.
 - **No newsletter pop-up and no chat widget** at launch.
 - **No stock language:** unlock, supercharge, 10x, secret weapon, bespoke,
