@@ -68,7 +68,7 @@ export const tracks: Record<TrackId, Track> = {
     card: {
       kicker: "B2B, SaaS and service businesses",
       title: "You need a CRO, CMO or GTM lead, but not full-time.",
-      text: "Go-to-market, pipeline, sales process and pricing. With the numbers your board needs to see.",
+      text: "A pipeline you can predict and numbers you can trust. At home, across Africa or overseas.",
       cta: "For B2B businesses",
       switchTo: "Switch to B2B",
     },
@@ -86,9 +86,9 @@ export const tracks: Record<TrackId, Track> = {
     ],
     inOut: {
       inward:
-        "Where margin slips between the sale and the delivery, which processes slow the team down, which decisions still wait for you, and whether the team is shaped for the next stage.",
+        "Numbers nobody trusts, systems bolted on as you grew, spend no one can prove is working, and decisions that still wait for you. We fix them, and build the tools that keep them fixed.",
       outward:
-        "Who you should be selling to, the offer and the price, how you go to market, and a pipeline that turns it into revenue you can forecast.",
+        "Who you sell to and what you say, the pipeline that wins them, and the next market: at home, across Africa or overseas.",
     },
     leads: "andrew",
   },
