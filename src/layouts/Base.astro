@@ -64,14 +64,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </main>
     <Footer />
     <script>
-      // Choosing a version of the homepage (/, /b2b, /ecommerce) swaps the
-      // page in place. Everything above the choice is identical across the
-      // three, so the reader stays exactly where they were and only what is
-      // below changes. The link's #your-path is the fallback without script.
-      const homes = new Set(["/", "/b2b", "/b2b/", "/ecommerce", "/ecommerce/"]);
+      // Choosing a version of the homepage swaps the page in place.
+      // Everything above the choice is identical across the versions, so the
+      // reader stays exactly where they were and only what is below changes.
+      // Without script, the link's #your-path does the same job.
       let keepY: number | null = null;
       document.addEventListener("astro:before-preparation", (e) => {
-        if (homes.has(e.from.pathname) && homes.has(e.to.pathname) && e.to.hash === "#your-path") {
+        if (e.to.hash === "#your-path" && e.to.pathname !== e.from.pathname && document.getElementById("your-path")) {
           keepY = window.scrollY;
           e.to.hash = "";
         }
