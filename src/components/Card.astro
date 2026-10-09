@@ -5,6 +5,10 @@
  *   symptom     a commercial symptom and its consequence. Not a link.
  *   engagement  one of the three engagements, with its named principle.
  * A fourth use is a variant here, not a new component.
+ *
+ * A path card on /b2b or /ecommerce has a state: the visitor's own path is
+ * "chosen" (marked, not a link: they are already on it), the other is "other"
+ * (a quieter link that switches version).
  */
 interface Props {
   variant: "path" | "symptom" | "engagement";
@@ -13,13 +17,14 @@ interface Props {
   href?: string;
   cta?: string;
   principle?: string;
+  state?: "chosen" | "other";
 }
 
-const { variant, title, kicker, href, cta, principle } = Astro.props;
-const Tag = variant === "path" && href ? "a" : "article";
+const { variant, title, kicker, href, cta, principle, state } = Astro.props;
+const Tag = variant === "path" && href && state !== "chosen" ? "a" : "article";
 ---
 
-<Tag class:list={["card", variant]} href={Tag === "a" ? href : undefined}>
+<Tag class:list={["card", variant, state]} href={Tag === "a" ? href : undefined}>
   {kicker && <p class="kicker label">{kicker}</p>}
   {variant === "symptom"
     ? <p class="title display">{title}</p>
@@ -28,7 +33,7 @@ const Tag = variant === "path" && href ? "a" : "article";
   {principle && <p class="principle">“{principle}”</p>}
   {cta && (
     variant === "path"
-      ? <span class="go">{cta} <span aria-hidden="true">→</span></span>
+      ? <span class="go">{cta} <span aria-hidden="true">{state === "chosen" ? "↓" : "→"}</span></span>
       : href && <a class="go link" href={href}>{cta} <span aria-hidden="true">→</span></a>
   )}
 </Tag>
@@ -51,6 +56,11 @@ const Tag = variant === "path" && href ? "a" : "article";
   .body { color: var(--muted); max-width: 30em; display: grid; gap: 12px; }
   .principle { font-weight: 600; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
   .go { margin-top: auto; padding-top: 10px; font-weight: 600; display: inline-flex; gap: 8px; align-self: flex-start; }
+
+  .chosen { border-color: var(--torch); border-top-width: 3px; }
+  .chosen .go { color: var(--muted); font-weight: 400; }
+  .other { opacity: 0.62; transition: opacity 0.2s, border-color 0.2s; }
+  .other:hover, .other:focus-visible { opacity: 1; }
 
   .symptom { border-width: 1px 0 0; border-radius: 0; padding: 20px 0 0; gap: 10px; }
   .symptom .title { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.45rem); line-height: 1.15; letter-spacing: -0.015em; }

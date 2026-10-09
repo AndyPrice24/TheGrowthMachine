@@ -67,9 +67,20 @@ records the outcome. Where this file and a brief disagree, this file wins.
   seat, and think like the person who owns all of it". The page also serves the healthy business that
   wants its next revenue, not only the one with leaks, so copy should not
   read purely as a repair job.
-- **Launch scope:** Home, How we work and the three engagement pages, Who we
-  are, Before you hire, and booking. The Ecommerce and Startups paths follow.
-  No Insights section until four to six real articles exist.
+- **Launch scope:** Home (in its three versions, below), How we work and the
+  three engagement pages, Who we are, Before you hire, and booking. No
+  Insights section until four to six real articles exist.
+- **The homepage is one page with three addresses (decided 9 October 2026).**
+  `/` shows the shared opening (hero, both sides of the number, the awkward
+  stage) and ends at "Which sounds like you?". `/b2b` and `/ecommerce` show
+  the same opening, then everything below the split written for that
+  audience: the machine's step text, inwards and outwards, and who is
+  introduced first. Andrew's outbound emails link straight to a track. No
+  scroll lock and no in-page swapping: each version is plain static HTML, so
+  it can be found, shared and bookmarked. `HomePage.astro` renders all three;
+  the per-audience copy lives in `src/data/tracks.ts`. One machine artwork
+  for both, with tailored words beside it, not inside it. The audience label
+  is "B2B, SaaS and service businesses", never "enterprise".
 - **Photography: AI likenesses of Andrew and Tarren, by their decision.** The
   homepage hero is an AI-synthesised photo of the two of them
   (`src/assets/hero/andrew-and-tarren.webp`, 8 October 2026). Andrew confirmed
@@ -156,11 +167,13 @@ logo itself.
 
 ## Components
 
-`src/components/`, twelve so far against a ceiling of fourteen. A page that
+`src/components/`, thirteen so far against a ceiling of fourteen. A page that
 seems to need another one usually needs a variant of an existing one.
 
 Logo · Header · Footer · Button · Section · Hero · Machine · MachineRun ·
-Card (variants: path, symptom, engagement) · BioBlock · Placeholder · CtaBand
+Card (variants: path, symptom, engagement; a path card can be "chosen" or
+"other") · BioBlock · Placeholder · CtaBand · HomePage (the homepage body,
+for `/`, `/b2b` and `/ecommerce`)
 
 ## Content that does not exist yet
 

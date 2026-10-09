@@ -1,0 +1,358 @@
+---
+/*
+ * The homepage, in three versions (decided 9 October 2026):
+ *   /            the shared opening, ending at the choice
+ *   /b2b         the same opening, then everything below written for B2B,
+ *   /ecommerce   or for ecommerce brands. Outbound emails link straight here.
+ *
+ * Order, and why:
+ *   1 Hero            one promise
+ *   2 Both sides      revenue and margin, and who owns all of it
+ *   3 Awkward stage   the problem; true for both audiences, so before the split
+ *   4 The split       ecommerce or B2B. On / the page ends here
+ *   5 How we work     the machine, with the words beside it for this audience
+ *   6 In and out      fixing what leaks, building what's next
+ *   7 Ways to work    how the method is bought
+ *   8 Who you get     the two founders; this audience's lead introduced first
+ *   9 Qualifier       capacity is limited; say so, then book
+ *
+ * Sections alternate ink and cream. How we work is ink: Andrew chose the
+ * machine on black. Copy is a working draft, refined with Andrew and Tarren.
+ */
+import Base from "../layouts/Base.astro";
+import Hero from "./Hero.astro";
+import Section from "./Section.astro";
+import Machine from "./Machine.astro";
+import MachineRun from "./MachineRun.astro";
+import Card from "./Card.astro";
+import BioBlock from "./BioBlock.astro";
+import Placeholder from "./Placeholder.astro";
+import CtaBand from "./CtaBand.astro";
+import Button from "./Button.astro";
+import heroPhoto from "../assets/hero/andrew-and-tarren.webp";
+import { tracks, trackOrder, type TrackId } from "../data/tracks";
+
+interface Props {
+  trackId?: TrackId;
+}
+
+const track = Astro.props.trackId ? tracks[Astro.props.trackId] : undefined;
+const tarrenFirst = track?.leads === "tarren";
+const meta = track?.meta ?? {
+  title: "Fractional CRO, CMO and GTM Leadership | The Growth Machine",
+  description:
+    "Fractional CRO, CMO, GTM and ecommerce leadership from founders who judge growth by profit. We find your next revenue and what's leaking, then lead the work.",
+};
+---
+
+<Base title={meta.title} description={meta.description}>
+  <Hero
+    label="Fractional CRO · CMO · GTM lead"
+    title="More revenue. Better margins. Without the full-time hire."
+    image={heroPhoto}
+    imageAlt="Andrew and Tarren Price at a desk, working through something on a laptop together."
+  >
+    <p>
+      Founders who've run businesses on our own money, so we judge growth by profit, not activity. We find your next
+      revenue and what's leaking, then do the work or lead your team through it.
+    </p>
+    <Fragment slot="actions">
+      <Button href="/call">Book a 30-minute call</Button>
+      <a class="link" href={track ? "#how-we-work" : "#your-path"}>See how it works <span aria-hidden="true">→</span></a>
+    </Fragment>
+  </Hero>
+
+  <Section
+    tone="cream"
+    label="Both sides of the number"
+    title="More revenue is only good news if more of it stays."
+  >
+    <div class="reframe">
+      <Machine />
+      <div class="sides">
+        <div class="side">
+          <h3 class="display h3">Revenue</h3>
+          <p>New ways to earn, better ways to earn, and more from the same effort.</p>
+          <p class="levers muted">Go-to-market · Pricing · Channels · Retention</p>
+        </div>
+        <div class="side">
+          <h3 class="display h3">Margin</h3>
+          <p>Money the business already makes and quietly loses on the way out.</p>
+          <p class="levers muted">Fees and costs · Processes · Team shape · Wasted spend</p>
+        </div>
+      </div>
+    </div>
+    <div class="measures">
+      <div class="measure">
+        <p class="label">A CMO</p>
+        <p class="by display">owns the market.</p>
+      </div>
+      <div class="measure">
+        <p class="label">A CRO</p>
+        <p class="by display">owns the revenue.</p>
+      </div>
+      <div class="measure founder">
+        <p class="label">A founder</p>
+        <p class="by display">owns all of it.</p>
+      </div>
+    </div>
+    <p class="pairing">We fill the seat you need, and think like the person who owns all of it.</p>
+  </Section>
+
+  <Section tone="ink" label="The awkward stage" title="You probably don't need another agency.">
+    <div class="problem">
+      <div class="lede-col">
+        <p class="lede">
+          Growing businesses reach an awkward stage. There are people, agencies, software and ideas, yet growth is
+          uneven, decisions still route through the founder, and nobody owns the whole commercial picture.
+        </p>
+        <p class="muted">
+          The problem might be sales, marketing, pricing, ecommerce or how the team is set up. Hire a specialist before
+          you know which, and the machine gets more complicated, not better.
+        </p>
+      </div>
+      <div class="symptoms">
+        <Card variant="symptom" title="Growth has stalled, or stopped being predictable.">
+          <p>And nobody can say whether it is a revenue problem or a margin problem.</p>
+        </Card>
+        <Card variant="symptom" title="Every important decision still goes through the founder.">
+          <p>So the business can only grow as fast as one person's diary.</p>
+        </Card>
+        <Card variant="symptom" title="You are about to hire a CRO or a CMO.">
+          <p>Before knowing which seat the business actually needs filled.</p>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="cream" id="your-path" label="Start where you are" title="Which sounds like you?">
+    <div class="grid-2">
+      {trackOrder.map((id) => {
+        const t = tracks[id];
+        const state = !track ? undefined : id === track.id ? "chosen" : "other";
+        return (
+          <Card
+            variant="path"
+            href={`${t.path}#your-path`}
+            kicker={t.card.kicker}
+            title={t.card.title}
+            cta={state === "chosen" ? "Your version, below" : state === "other" ? t.card.switchTo : t.card.cta}
+            state={state}
+          >
+            <p>{t.card.text}</p>
+          </Card>
+        );
+      })}
+    </div>
+    {!track && (
+      <p class="fork-note">
+        Not sure which? <a class="link" href="/call">Book a 30-minute call</a> and we will work it out together.
+      </p>
+    )}
+  </Section>
+
+  {track && (
+    <>
+      <Section tone="ink" id="how-we-work" label="How we work" title="Find the leak, then the lever.">
+        <p class="lede">
+          The same four stages on every engagement, in the same order. The first is the deep dive. The last is making
+          sure the business no longer needs us.
+        </p>
+        <MachineRun copy={track.machine} />
+      </Section>
+
+      <Section tone="cream" id="inward-outward" label="Inwards and outwards" title="You started out facing outwards.">
+        <p class="lede">
+          Founders build a business looking out: at customers, markets, the next opportunity. Then the business needs
+          running, and the view turns inward. We look both ways, so you can face forward again.
+        </p>
+        <div class="grid-2 io">
+          <div class="io-col">
+            <p class="label">Looking inward</p>
+            <h3 class="display h3">Fixing what leaks.</h3>
+            <p>{track.inOut.inward}</p>
+          </div>
+          <div class="io-col">
+            <p class="label">Looking outward</p>
+            <h3 class="display h3">Building what's next.</h3>
+            <p>{track.inOut.outward}</p>
+          </div>
+        </div>
+        <p class="io-close">Most businesses need some of both. The Machine Check tells you which comes first.</p>
+      </Section>
+
+      <Section tone="ink" id="ways-to-work" label="Ways to work with us" title="One way in. Two ways to continue.">
+        <p class="lede">
+          Every engagement starts with a paid deep dive. What happens next depends on what it finds, and the decision is
+          yours.
+        </p>
+        <div class="grid-3">
+          <Card
+            variant="engagement"
+            kicker="Start here"
+            title="The Machine Check"
+            principle="Everything ranked by what it costs you."
+            href="/how-we-work/machine-check"
+            cta="About the Machine Check"
+          >
+            <p>
+              A fixed-fee deep dive into the whole commercial picture. You get a ranked view of what each problem costs
+              you, in revenue and in margin, with our reasoning and what to do first.
+            </p>
+          </Card>
+          <Card
+            variant="engagement"
+            kicker="If the fix is a thing"
+            title="The Build"
+            principle="It has to still work after we leave."
+            href="/how-we-work/build"
+            cta="About the Build"
+          >
+            <p>
+              A defined project with a handover: a strategy, a plan, a sales process, a system or an AI tool. We build it
+              with your team and leave it running.
+            </p>
+          </Card>
+          <Card
+            variant="engagement"
+            kicker="If the fix is leadership"
+            title="The Growth Office"
+            principle="In the business, not on a call."
+            href="/how-we-work/growth-office"
+            cta="About the Growth Office"
+          >
+            <p>
+              One or both of us in your business part-time, owning the growth agenda and doing the work alongside your
+              people. When you are ready to hire permanently, we help you hire and hand over.
+            </p>
+          </Card>
+        </div>
+        <div class="bench">
+          <p class="label">Specialists</p>
+          <p class="muted">
+            We are two. When a job needs a discipline we don't have, we bring in a specialist we have worked with, at their
+            rate, and you see the number before we commit it. We don't mark up other people's time.
+          </p>
+        </div>
+      </Section>
+
+      <Section tone="cream" label="Who you actually get" title="Two senior operators. No juniors, no handoff.">
+        <p class="lede">
+          The people you meet are the people doing the work. The problem decides who leads, and most clients get both of
+          us.
+        </p>
+        <div class="grid-2 bios">
+          {tarrenFirst ? (
+            <>
+          <BioBlock
+            name="Tarren Price"
+            role="Ecommerce and consumer brands"
+            pending="Tarren's full bio, portrait and three to five career results"
+          >
+            <p>
+              Ecommerce and FMCG personal care, across Amazon, Shopify and Meta advertising. Builds and reshapes ecommerce
+              operations to lift revenue and margin.
+            </p>
+          </BioBlock>
+          <BioBlock
+            name="Andrew Price"
+            role="Revenue, sales and commercial strategy"
+            pending="Andrew's full bio, portrait and three to five career results"
+          >
+            <p>Multiple-time founder, CEO and chief revenue officer, across B2B and B2C.</p>
+          </BioBlock>
+            </>
+          ) : (
+            <>
+          <BioBlock
+            name="Andrew Price"
+            role="Revenue, sales and commercial strategy"
+            pending="Andrew's full bio, portrait and three to five career results"
+          >
+            <p>Multiple-time founder, CEO and chief revenue officer, across B2B and B2C.</p>
+          </BioBlock>
+          <BioBlock
+            name="Tarren Price"
+            role="Ecommerce and consumer brands"
+            pending="Tarren's full bio, portrait and three to five career results"
+          >
+            <p>
+              Ecommerce and FMCG personal care, across Amazon, Shopify and Meta advertising. Builds and reshapes ecommerce
+              operations to lift revenue and margin.
+            </p>
+          </BioBlock>
+            </>
+          )}
+        </div>
+        <div class="record">
+          <h3 class="display h3">Before The Growth Machine.</h3>
+          <p class="muted">
+            What we have done in our own careers, labelled as exactly that. Client results replace this as soon as there
+            are results we are allowed to publish.
+          </p>
+          <Placeholder needs="Career results from Andrew and Tarren, written as problem, action, result, with numbers only where they can be stood behind" />
+        </div>
+        <p><a class="link" href="/who-we-are">Meet Andrew and Tarren <span aria-hidden="true">→</span></a></p>
+      </Section>
+
+    </>
+  )}
+
+  <CtaBand
+    title="Not sure whether you need a CRO, a CMO or something else? Good. That is where we start."
+    href="/call"
+    action="Book a 30-minute call"
+    tone="ink"
+  >
+    There are two of us, so we take on a small number of clients at a time. Thirty minutes, no deck: we will ask where
+    you are trying to get to and what is in the way.
+  </CtaBand>
+</Base>
+
+<style>
+  .reframe { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .sides { display: grid; gap: 28px; }
+  .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .side p { max-width: 32em; }
+  .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
+  /* the section's point: three ways of keeping score across the full width,
+     the founder's marked, so the comparison is seen before it is read */
+  .measures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .measure { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
+  .measure.founder { border-top: 3px solid var(--torch); padding-top: 18px; }
+  .measure .by { font-size: var(--step-h3); line-height: 1.1; letter-spacing: var(--track-display); max-width: 10em; }
+  .measure:not(.founder) .by { color: var(--muted); }
+  .pairing { font-size: var(--step-lede); font-weight: 600; margin-top: -8px; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+  .problem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .lede-col { display: grid; gap: 18px; }
+  .lede-col .muted { max-width: 34em; }
+  .symptoms { display: grid; gap: 28px; }
+
+  .bench { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 10px 32px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 24px; }
+  .bench .muted { max-width: 44em; }
+
+  .fork-note { color: var(--muted); }
+
+  .io { gap: clamp(28px, 4vw, 56px); }
+  .io-col { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
+  .io-col p:last-child { max-width: 32em; }
+  .io-close { font-size: var(--step-lede); font-weight: 600; }
+
+  .bios { gap: 40px; }
+  .record { display: grid; gap: 14px; border-top: 1px solid var(--line); padding-top: 28px; }
+  .record .muted { max-width: 40em; }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .reframe, .problem, .grid-2, .bench { grid-template-columns: minmax(0, 1fr); }
+    .measures { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .measure { grid-template-columns: 7.5em minmax(0, 1fr); align-items: baseline; gap: 12px; padding-block: 14px; }
+    .measure.founder { padding-top: 12px; }
+  }
+</style>
