@@ -71,6 +71,22 @@ records the outcome. Where this file and a brief disagree, this file wins.
   being sold. The page also serves the healthy business that wants its next
   revenue, not only the one with leaks, so copy should not read purely as a
   repair job.
+- **Buyer research (October 2026), the basis for audience copy.** 32
+  LinkedIn job ads (SA, UK, remote) plus a web scan of fractional postings;
+  raw notes in `research/2026-10-linkedin-growth-hiring.md`. What it showed:
+  - The B2B reasons to hire, in order: a pipeline you can predict; numbers
+    you can trust (the pain is trust, "a forecast the board can trust", not
+    a lack of dashboards); a sales engine that does not run through the
+    founder, or through nobody; new markets and launches.
+  - Buyers reject consultants: "a doer, not a consultant", "a builder, not a
+    caretaker". Only 1 ad in 32 wanted advice without execution.
+  - AI is expected (9 of 32, mostly as a requirement) but never the reason
+    for the hire. Say what it does: "revenue that grows faster than
+    headcount". Never "redundancy", never "AI-powered".
+  - South Africa: every senior ad was permanent and nobody advertises
+    "fractional"; the main SA trigger is expansion into the rest of Africa.
+    Fractional demand is found by approaching permanent-role ads, which is
+    Andrew's outbound.
 - **Launch scope:** Home (in its three versions, below), How we work and the
   three engagement pages, Who we are, Before you hire, and booking. No
   Insights section until four to six real articles exist.

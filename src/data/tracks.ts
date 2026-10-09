@@ -72,13 +72,17 @@ export const tracks: Record<TrackId, Track> = {
       cta: "For B2B businesses",
       switchTo: "Switch to B2B",
     },
+    /* Rebuilt from 32 LinkedIn job ads and a web scan of fractional postings
+       (October 2026): the four main B2B reasons to hire, in order, are a
+       pipeline you can predict, numbers you can trust, a sales engine that
+       does not run through the founder, and new markets or launches. */
     machine: [
-      { name: "What comes in", text: "A pipeline that won't grow, a go-to-market nobody owns, deals that stall, pricing set years ago, a founder still closing every big deal." },
-      { name: "Diagnose", text: "We read the whole commercial engine, from first touch to renewal, and rank every problem by what it costs you." },
-      { name: "Design", text: "A go-to-market plan with a few priorities: who you sell to, how you win them, what you charge, and who owns each number." },
-      { name: "Execute", text: "We run it with your team: the sales process, pipeline reviews, campaigns and hires. In the business, not in a deck." },
-      { name: "Embed", text: "Playbooks, dashboards and people who own them, so the engine keeps running when we step back." },
-      { name: "What comes out", text: "A pipeline you can forecast, revenue that compounds, and margins that hold as you grow." },
+      { name: "What comes in", text: "A pipeline you can't predict, numbers nobody trusts, sales that still run through the founder, a new market with no one to lead it. Or a business ready for its next stage." },
+      { name: "Diagnose", text: "We find out what's really working: every channel, deal and number, ranked by what it's worth to you." },
+      { name: "Design", text: "We decide who you sell to, what you say and what you charge, and build the plan around a few numbers that matter." },
+      { name: "Execute", text: "We do the work with your team: pipeline, campaigns, the sales process, and the tools that run them, AI included." },
+      { name: "Embed", text: "A forecast the board can trust, playbooks your team owns, and an engine that runs without depending on anyone, us included." },
+      { name: "What comes out", text: "A pipeline you can predict, numbers you can trust, and revenue that grows faster than headcount." },
     ],
     inOut: {
       inward:
