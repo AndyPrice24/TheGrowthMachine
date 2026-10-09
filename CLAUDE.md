@@ -74,7 +74,12 @@ records the outcome. Where this file and a brief disagree, this file wins.
   `/` shows the shared opening (hero, the awkward stage, both sides of the
   number) and ends at "Which sounds like you?". The awkward stage sits
   straight under the hero because it explains "without the full-time hire":
-  not an agency, not a full-time hire, not yet. `/b2b` and `/ecommerce` show
+  not an agency, not a full-time hire, founders who do the work.
+- **We are doers first (decided 9 October 2026).** Copy must never read as
+  "we diagnose, then hand you to an employee or an agency". Andrew and
+  Tarren do the executional work, across several titles, for as long as the
+  client needs them. Handover is a benefit at the end, not the job: whoever
+  is hired later inherits something that already works. `/b2b` and `/ecommerce` show
   the same opening, then everything below the split written for that
   audience: the machine's step text, inwards and outwards, and who is
   introduced first. Andrew's outbound emails link straight to a track. No
