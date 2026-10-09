@@ -71,8 +71,10 @@ records the outcome. Where this file and a brief disagree, this file wins.
   three engagement pages, Who we are, Before you hire, and booking. No
   Insights section until four to six real articles exist.
 - **The homepage is one page with three addresses (decided 9 October 2026).**
-  `/` shows the shared opening (hero, both sides of the number, the awkward
-  stage) and ends at "Which sounds like you?". `/b2b` and `/ecommerce` show
+  `/` shows the shared opening (hero, the awkward stage, both sides of the
+  number) and ends at "Which sounds like you?". The awkward stage sits
+  straight under the hero because it explains "without the full-time hire":
+  not an agency, not a full-time hire, not yet. `/b2b` and `/ecommerce` show
   the same opening, then everything below the split written for that
   audience: the machine's step text, inwards and outwards, and who is
   introduced first. Andrew's outbound emails link straight to a track. No

@@ -6,9 +6,10 @@
  *   /ecommerce   or for ecommerce brands. Outbound emails link straight here.
  *
  * Order, and why:
- *   1 Hero            one promise
- *   2 Both sides      revenue and margin, and who owns all of it
- *   3 Awkward stage   the problem; true for both audiences, so before the split
+ *   1 Hero            one promise: without the full-time hire
+ *   2 Awkward stage   why fractional: not an agency, not a full-time hire, not
+ *                     yet. It explains the promise, so it comes straight after
+ *   3 Both sides      revenue and margin, and who owns all of it
  *   4 The split       ecommerce or B2B. On / the page ends here
  *   5 How we work     the machine, with the words beside it for this audience
  *   6 In and out      fixing what leaks, building what's next
@@ -62,8 +63,35 @@ const meta = track?.meta ?? {
     </Fragment>
   </Hero>
 
+  <Section tone="cream" label="The awkward stage" title="Not another agency. Not a full-time hire. Not yet.">
+    <div class="problem">
+      <div class="lede-col">
+        <p class="lede">
+          Growing businesses reach an awkward stage. There are people, agencies, software and ideas, yet growth is
+          uneven and nobody owns the whole commercial picture.
+        </p>
+        <p class="muted">
+          An agency does what it is briefed to do, and someone still has to write the brief. A full-time CRO or CMO
+          costs a full-time salary before you know which seat you actually need. We sit in between: senior, part-time
+          and inside the business. When the time is right, we help you brief the agency or hire the person.
+        </p>
+      </div>
+      <div class="symptoms">
+        <Card variant="symptom" title="Growth has stalled, or stopped being predictable.">
+          <p>And nobody can say whether it is a revenue problem or a margin problem.</p>
+        </Card>
+        <Card variant="symptom" title="Every important decision still goes through the founder.">
+          <p>So the business can only grow as fast as one person's diary.</p>
+        </Card>
+        <Card variant="symptom" title="You are about to hire a CRO, CMO or GTM lead.">
+          <p>Before knowing which seat the business actually needs filled, or for how many days a week.</p>
+        </Card>
+      </div>
+    </div>
+  </Section>
+
   <Section
-    tone="cream"
+    tone="ink"
     label="Both sides of the number"
     title="More revenue is only good news if more of it stays."
   >
@@ -97,32 +125,6 @@ const meta = track?.meta ?? {
       </div>
     </div>
     <p class="pairing">We fill the seat you need, and think like the person who owns all of it.</p>
-  </Section>
-
-  <Section tone="ink" label="The awkward stage" title="You probably don't need another agency.">
-    <div class="problem">
-      <div class="lede-col">
-        <p class="lede">
-          Growing businesses reach an awkward stage. There are people, agencies, software and ideas, yet growth is
-          uneven, decisions still route through the founder, and nobody owns the whole commercial picture.
-        </p>
-        <p class="muted">
-          The problem might be sales, marketing, pricing, ecommerce or how the team is set up. Hire a specialist before
-          you know which, and the machine gets more complicated, not better.
-        </p>
-      </div>
-      <div class="symptoms">
-        <Card variant="symptom" title="Growth has stalled, or stopped being predictable.">
-          <p>And nobody can say whether it is a revenue problem or a margin problem.</p>
-        </Card>
-        <Card variant="symptom" title="Every important decision still goes through the founder.">
-          <p>So the business can only grow as fast as one person's diary.</p>
-        </Card>
-        <Card variant="symptom" title="You are about to hire a CRO or a CMO.">
-          <p>Before knowing which seat the business actually needs filled.</p>
-        </Card>
-      </div>
-    </div>
   </Section>
 
   <Section tone="cream" id="your-path" label="Start where you are" title="Which sounds like you?">
