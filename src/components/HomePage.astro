@@ -7,8 +7,9 @@
  *
  * Order, and why:
  *   1 Hero            one promise: without the full-time hire
- *   2 Awkward stage   why fractional: not an agency, not a full-time hire, not
- *                     yet. It explains the promise, so it comes straight after
+ *   2 Before you hire why fractional: not an agency, not a full-time hire, not
+ *                     yet. Fix what spans the titles first, then hire the
+ *                     right one. It explains the promise, so it comes next
  *   3 Both sides      revenue and margin, and who owns all of it
  *   4 The split       ecommerce or B2B. On / the page ends here
  *   5 How we work     the machine, with the words beside it for this audience
@@ -63,7 +64,7 @@ const meta = track?.meta ?? {
     </Fragment>
   </Hero>
 
-  <Section tone="cream" label="The awkward stage" title="Not another agency. Not a full-time hire. Not yet.">
+  <Section tone="cream" label="Before you hire" title="Not another agency. Not a full-time hire. Not yet." split>
     <div class="problem">
       <div class="lede-col">
         <p class="lede">
@@ -72,8 +73,12 @@ const meta = track?.meta ?? {
         </p>
         <p class="muted">
           An agency does what it is briefed to do, and someone still has to write the brief. A full-time CRO or CMO
-          costs a full-time salary before you know which seat you actually need. We sit in between: senior, part-time
-          and inside the business. When the time is right, we help you brief the agency or hire the person.
+          costs a full-time salary before you know which title you need, and most of what holds growth back spans
+          several titles at once.
+        </p>
+        <p class="lede-strong">
+          Start with us. We fix what spans the titles first. Then you hire the right person, or brief the right agency,
+          with the job already defined.
         </p>
       </div>
       <div class="symptoms">
@@ -332,6 +337,7 @@ const meta = track?.meta ?? {
   .problem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
   .lede-col { display: grid; gap: 18px; }
   .lede-col .muted { max-width: 34em; }
+  .lede-strong { font-size: var(--step-lede); font-weight: 600; max-width: 30em; }
   .symptoms { display: grid; gap: 28px; }
 
   .bench { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 10px 32px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 24px; }
