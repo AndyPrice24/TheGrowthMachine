@@ -248,6 +248,20 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   convention from memory.
 - Every change must pass `npm run build` and `npm run check` before it is
   pushed.
+- **Pages swap in place, they do not reload (decided 9 October 2026).**
+  Choosing B2B or ecommerce used to reload the whole site, which felt like
+  being thrown to a new page. Astro's `ClientRouter` (in `Base.astro`) now
+  fetches the next page in the background and swaps it in. Between `/`,
+  `/b2b` and `/ecommerce` the reader's scroll position is kept, because
+  everything above the choice is identical, so only what is below it
+  changes. The path cards prefetch as soon as they are on screen, so the
+  switch is instant. Without JavaScript the links still work as ordinary
+  links to `#your-path`.
+  **Every script must follow the router's lifecycle:** set up inside
+  `document.addEventListener("astro:page-load", …)`, attach every window and
+  document listener with an `AbortController` signal, and abort it on
+  `astro:before-swap`. A script that runs once at load works on the first
+  page and silently does nothing after the first switch.
 - **Fonts:** Astro's `google` provider needs `fonts.google.com`, which the
   cloud build environment blocks, and the `npm` provider still fetches files
   from a CDN. The `local` provider pointing at files in `node_modules` needs no

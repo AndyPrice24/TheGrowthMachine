@@ -225,6 +225,11 @@ const ALT =
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   const phone = window.matchMedia("(max-width: 760px)");
 
+  // Runs on every page, including pages swapped in by the router. Every
+  // listener is dropped, and any scroll lock lifted, before the next swap.
+  document.addEventListener("astro:page-load", () => {
+  const off = new AbortController();
+  const signal = off.signal;
   for (const root of document.querySelectorAll<HTMLElement>("[data-machine-run]")) {
     const stepEls = [...root.querySelectorAll<HTMLElement>(".step")];
     const frames = [...root.querySelectorAll<HTMLElement>(".frame")];
@@ -280,16 +285,16 @@ const ALT =
     }
 
     const blocked = (down: boolean) => running() && down && window.scrollY >= holdY! - 1;
-    window.addEventListener("wheel", (e) => blocked(e.deltaY > 0) && e.preventDefault(), { passive: false });
+    window.addEventListener("wheel", (e) => blocked(e.deltaY > 0) && e.preventDefault(), { passive: false, signal });
     let touchY = 0;
-    window.addEventListener("touchstart", (e) => (touchY = e.touches[0].clientY), { passive: true });
-    window.addEventListener("touchmove", (e) => blocked(touchY - e.touches[0].clientY > 0) && e.preventDefault(), { passive: false });
+    window.addEventListener("touchstart", (e) => (touchY = e.touches[0].clientY), { passive: true, signal });
+    window.addEventListener("touchmove", (e) => blocked(touchY - e.touches[0].clientY > 0) && e.preventDefault(), { passive: false, signal });
     window.addEventListener("keydown", (e) => {
       const down = ["ArrowDown", "PageDown", "End", " ", "Spacebar"].includes(e.key) && !e.shiftKey;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (blocked(down)) e.preventDefault();
-    });
+    }, { signal });
 
     const frame = () => root.querySelector<HTMLElement>(phone.matches ? ".frame--mobile" : ".frame--desktop")!;
 
@@ -343,12 +348,15 @@ const ALT =
       }
     }
 
-    window.addEventListener("scroll", () => root.classList.contains("is-live") && queue(), { passive: true });
-    window.addEventListener("resize", () => root.classList.contains("is-live") && queue());
-    reduce.addEventListener("change", start);
-    phone.addEventListener("change", start);
+    window.addEventListener("scroll", () => root.classList.contains("is-live") && queue(), { passive: true, signal });
+    window.addEventListener("resize", () => root.classList.contains("is-live") && queue(), { signal });
+    reduce.addEventListener("change", start, { signal });
+    phone.addEventListener("change", start, { signal });
+    signal.addEventListener("abort", endHold);
     start();
   }
+  document.addEventListener("astro:before-swap", () => off.abort(), { once: true });
+  });
 </script>
 
 <style is:global>

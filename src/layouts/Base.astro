@@ -5,6 +5,7 @@
  * (150 to 160 characters).
  */
 import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { WORDMARK, GEAR } from "../components/logo-paths";
@@ -44,7 +45,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <Font cssVariable="--font-body" preload />
     <Font cssVariable="--font-label" />
 
-    <script is:inline>document.documentElement.classList.add("js");</script>
+    <script is:inline data-astro-rerun>document.documentElement.classList.add("js");</script>
+    <!-- Pages swap in place instead of reloading, so moving between versions
+         of the homepage keeps the reader where they are. -->
+    <ClientRouter />
     <slot name="head" />
   </head>
   <body>
@@ -59,6 +63,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
+    <script>
+      // Choosing a version of the homepage (/, /b2b, /ecommerce) swaps the
+      // page in place. Everything above the choice is identical across the
+      // three, so the reader stays exactly where they were and only what is
+      // below changes. The link's #your-path is the fallback without script.
+      const homes = new Set(["/", "/b2b", "/b2b/", "/ecommerce", "/ecommerce/"]);
+      let keepY: number | null = null;
+      document.addEventListener("astro:before-preparation", (e) => {
+        if (homes.has(e.from.pathname) && homes.has(e.to.pathname) && e.to.hash === "#your-path") {
+          keepY = window.scrollY;
+          e.to.hash = "";
+        }
+      });
+      document.addEventListener("astro:after-swap", () => {
+        if (keepY !== null) window.scrollTo({ top: keepY, left: 0, behavior: "instant" });
+        keepY = null;
+      });
+    </script>
   </body>
 </html>
 

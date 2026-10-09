@@ -40,24 +40,37 @@ const path = Astro.url.pathname;
 </header>
 
 <script>
-  const head = document.querySelector<HTMLElement>(".site-head");
-  const btn = head?.querySelector<HTMLButtonElement>(".menu");
-  if (head && btn) {
+  // Runs on every page, including pages swapped in by the router.
+  document.addEventListener("astro:page-load", () => {
+    const head = document.querySelector<HTMLElement>(".site-head");
+    const btn = head?.querySelector<HTMLButtonElement>(".menu");
+    if (!head || !btn) return;
+    const off = new AbortController();
+    const signal = off.signal;
+    document.addEventListener("astro:before-swap", () => off.abort(), { once: true });
     const set = (open: boolean) => {
       head.dataset.menu = open ? "open" : "closed";
       btn.setAttribute("aria-expanded", String(open));
     };
-    btn.addEventListener("click", () => set(head.dataset.menu !== "open"));
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && head.dataset.menu === "open") {
-        set(false);
-        btn.focus();
-      }
-    });
-    document.addEventListener("click", (e) => {
-      if (head.dataset.menu === "open" && !head.contains(e.target as Node)) set(false);
-    });
-  }
+    btn.addEventListener("click", () => set(head.dataset.menu !== "open"), { signal });
+    document.addEventListener(
+      "keydown",
+      (e) => {
+        if (e.key === "Escape" && head.dataset.menu === "open") {
+          set(false);
+          btn.focus();
+        }
+      },
+      { signal },
+    );
+    document.addEventListener(
+      "click",
+      (e) => {
+        if (head.dataset.menu === "open" && !head.contains(e.target as Node)) set(false);
+      },
+      { signal },
+    );
+  });
 </script>
 
 <style>

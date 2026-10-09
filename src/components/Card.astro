@@ -24,7 +24,11 @@ const { variant, title, kicker, href, cta, principle, state } = Astro.props;
 const Tag = variant === "path" && href && state !== "chosen" ? "a" : "article";
 ---
 
-<Tag class:list={["card", variant, state]} href={Tag === "a" ? href : undefined}>
+<Tag
+  class:list={["card", variant, state]}
+  href={Tag === "a" ? href : undefined}
+  data-astro-prefetch={Tag === "a" && variant === "path" ? "viewport" : undefined}
+>
   {kicker && <p class="kicker label">{kicker}</p>}
   {variant === "symptom"
     ? <p class="title display">{title}</p>

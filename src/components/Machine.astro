@@ -26,39 +26,45 @@
 
 <script>
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const figures = [...document.querySelectorAll<HTMLElement>(".machine")];
-  let queued = false;
 
-  function update() {
-    queued = false;
-    const vh = window.innerHeight || 800;
-    for (const fig of figures) {
-      const gear = fig.querySelector<SVGElement>(".gear");
-      const flows = fig.querySelectorAll<SVGPathElement>(".flow");
-      if (reduce.matches) {
-        if (gear) gear.style.transform = "";
-        flows.forEach((f) => (f.style.strokeDashoffset = ""));
-        continue;
+  // Runs on every page, including pages swapped in by the router.
+  document.addEventListener("astro:page-load", () => {
+    const figures = [...document.querySelectorAll<HTMLElement>(".machine")];
+    if (!figures.length) return;
+    const off = new AbortController();
+    const signal = off.signal;
+    document.addEventListener("astro:before-swap", () => off.abort(), { once: true });
+    let queued = false;
+
+    function update() {
+      queued = false;
+      const vh = window.innerHeight || 800;
+      for (const fig of figures) {
+        const gear = fig.querySelector<SVGElement>(".gear");
+        const flows = fig.querySelectorAll<SVGPathElement>(".flow");
+        if (reduce.matches) {
+          if (gear) gear.style.transform = "";
+          flows.forEach((f) => (f.style.strokeDashoffset = ""));
+          continue;
+        }
+        const r = fig.getBoundingClientRect();
+        const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
+        if (gear) gear.style.transform = `rotate(${(p * 360).toFixed(1)}deg)`;
+        flows.forEach((f) => (f.style.strokeDashoffset = String(-(p * 160).toFixed(1))));
       }
-      const r = fig.getBoundingClientRect();
-      const p = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height)));
-      if (gear) gear.style.transform = `rotate(${(p * 360).toFixed(1)}deg)`;
-      flows.forEach((f) => (f.style.strokeDashoffset = String(-(p * 160).toFixed(1))));
     }
-  }
 
-  if (figures.length) {
     const queue = () => {
       if (!queued) {
         queued = true;
         requestAnimationFrame(update);
       }
     };
-    window.addEventListener("scroll", queue, { passive: true });
-    window.addEventListener("resize", queue);
-    reduce.addEventListener("change", queue);
+    window.addEventListener("scroll", queue, { passive: true, signal });
+    window.addEventListener("resize", queue, { signal });
+    reduce.addEventListener("change", queue, { signal });
     update();
-  }
+  });
 </script>
 
 <style>
