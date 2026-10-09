@@ -8,9 +8,9 @@
  * Order, and why:
  *   1 Hero            one promise: without the full-time hire
  *   2 Before you hire why fractional: not an agency, not a full-time hire.
- *                     Founders who do the work across the titles, for as
- *                     long as needed. It explains the promise, so it is next
- *   3 Both sides      revenue and margin, and who owns all of it
+ *                     Senior growth leaders who see the whole picture and do
+ *                     the work. It explains the promise, so it comes next
+ *   3 Both sides      revenue and margin; the CMO, CRO and founder mindsets
  *   4 The split       ecommerce or B2B. On / the page ends here
  *   5 How we work     the machine, with the words beside it for this audience
  *   6 In and out      fixing what leaks, building what's next
@@ -43,7 +43,7 @@ const tarrenFirst = track?.leads === "tarren";
 const meta = track?.meta ?? {
   title: "Fractional CRO, CMO and GTM Leadership | The Growth Machine",
   description:
-    "Fractional CRO, CMO, GTM and ecommerce leadership from founders who judge growth by profit. We find your next revenue and what's leaking, then lead the work.",
+    "Fractional CRO, CMO, GTM and ecommerce leadership from people who've founded and run their own businesses. We judge growth by profit, and we do the work.",
 };
 ---
 
@@ -55,7 +55,7 @@ const meta = track?.meta ?? {
     imageAlt="Andrew and Tarren Price at a desk, working through something on a laptop together."
   >
     <p>
-      Founders who've run businesses on our own money, so we judge growth by profit, not activity. We find your next
+      Growth leaders who've founded and run businesses on our own money, so we judge growth by profit, not activity. We find your next
       revenue and what's leaking, then do the work or lead your team through it.
     </p>
     <Fragment slot="actions">
@@ -64,7 +64,8 @@ const meta = track?.meta ?? {
     </Fragment>
   </Hero>
 
-  <Section tone="cream" label="Before you hire" title="Not another agency. Not a full-time hire. Founders who do the work." split>
+  <Section tone="cream" label="Before you hire" title="Not another agency. Not a full-time hire, yet." split>
+    <p class="standfirst display">Senior growth leaders who see the whole picture, and do the work.</p>
     <div class="problem">
       <div class="lede-col">
         <p class="lede">
@@ -77,7 +78,7 @@ const meta = track?.meta ?? {
           several titles at once.
         </p>
         <p class="lede-strong">
-          So we step in and do the work: across the titles, inside your business, for as long as you need us. When you
+          So we step in: across the titles, inside your business, for as long as you need us. When you
           do hire, or bring in an agency, they inherit something that already works.
         </p>
       </div>
@@ -117,19 +118,19 @@ const meta = track?.meta ?? {
     </div>
     <div class="measures">
       <div class="measure">
-        <p class="label">A CMO</p>
-        <p class="by display">owns the market.</p>
+        <p class="label">CMO mindset</p>
+        <p class="by display">sees the market.</p>
       </div>
       <div class="measure">
-        <p class="label">A CRO</p>
-        <p class="by display">owns the revenue.</p>
+        <p class="label">CRO mindset</p>
+        <p class="by display">sees the revenue.</p>
       </div>
       <div class="measure founder">
-        <p class="label">A founder</p>
-        <p class="by display">owns all of it.</p>
+        <p class="label">Founder mindset</p>
+        <p class="by display">sees all of it.</p>
       </div>
     </div>
-    <p class="pairing">We fill the seat you need, and think like the person who owns all of it.</p>
+    <p class="pairing">We bring all three to the seat you need filled.</p>
   </Section>
 
   <Section tone="cream" id="your-path" label="Start where you are" title="Which sounds like you?">
@@ -337,6 +338,7 @@ const meta = track?.meta ?? {
   .problem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
   .lede-col { display: grid; gap: 18px; }
   .lede-col .muted { max-width: 34em; }
+  .standfirst { font-size: var(--step-h3); line-height: 1.15; letter-spacing: var(--track-display); max-width: 22em; text-wrap: balance; margin-top: -8px; }
   .lede-strong { font-size: var(--step-lede); font-weight: 600; max-width: 30em; }
   .symptoms { display: grid; gap: 28px; }
 

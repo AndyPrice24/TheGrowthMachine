@@ -59,14 +59,18 @@ records the outcome. Where this file and a brief disagree, this file wins.
   hiring a CRO, CMO, GTM lead or entrepreneur in residence and pitches this
   instead of a full-time hire. The site's first job is to back up that pitch
   for someone arriving from his email.
-- **Positioning: founders, judged by profit (decided 8 October 2026).** Both
-  Andrew and Tarren have founded and run companies on their own capital. A
-  CMO owns the market and a CRO owns the revenue; a founder owns all of it.
-  That is the lead claim, ahead of seniority or headcount. Never belittle the
-  CRO or CMO role: those are the seats being sold. The line is "we fill the
-  seat, and think like the person who owns all of it". The page also serves the healthy business that
-  wants its next revenue, not only the one with leaks, so copy should not
-  read purely as a repair job.
+- **Positioning: growth leaders with a founder's mindset (decided 9 October
+  2026).** Visitors arrive looking for a CRO, CMO or GTM lead, so the copy
+  leads with the role ("growth leaders") and uses "founder" as the reason
+  they are better at it: both Andrew and Tarren have founded and run
+  companies on their own capital, so they judge growth by profit. Never call
+  them simply "founders" as a label. The comparison row is a combination,
+  not a contest: CMO mindset sees the market, CRO mindset sees the revenue,
+  founder mindset sees all of it, and "we bring all three to the seat you
+  need filled". Never belittle the CRO or CMO role: those are the seats
+  being sold. The page also serves the healthy business that wants its next
+  revenue, not only the one with leaks, so copy should not read purely as a
+  repair job.
 - **Launch scope:** Home (in its three versions, below), How we work and the
   three engagement pages, Who we are, Before you hire, and booking. No
   Insights section until four to six real articles exist.
@@ -74,7 +78,8 @@ records the outcome. Where this file and a brief disagree, this file wins.
   `/` shows the shared opening (hero, the awkward stage, both sides of the
   number) and ends at "Which sounds like you?". The awkward stage sits
   straight under the hero because it explains "without the full-time hire":
-  not an agency, not a full-time hire, founders who do the work.
+  not another agency, not a full-time hire, yet: senior growth leaders who
+  see the whole picture, and do the work.
 - **We are doers first (decided 9 October 2026).** Copy must never read as
   "we diagnose, then hand you to an employee or an agency". Andrew and
   Tarren do the executional work, across several titles, for as long as the

@@ -32,7 +32,7 @@ export const tracks: Record<TrackId, Track> = {
     meta: {
       title: "Fractional CMO and Ecommerce Lead | The Growth Machine",
       description:
-        "Fractional CMO and ecommerce leadership for consumer brands, from founders who judge growth by profit. Sharper customer, stronger offer, data-led spend.",
+        "Fractional CMO and ecommerce leadership for consumer brands, from people who've founded and run their own. Sharper customer, stronger offer, data-led spend.",
     },
     card: {
       kicker: "Ecommerce and consumer brands",
@@ -63,7 +63,7 @@ export const tracks: Record<TrackId, Track> = {
     meta: {
       title: "Fractional CRO, CMO and GTM for B2B | The Growth Machine",
       description:
-        "Fractional CRO, CMO and GTM leadership for B2B, SaaS and service businesses, from founders who judge growth by profit.",
+        "Fractional CRO, CMO and GTM leadership for B2B, SaaS and service businesses, from people who've founded and run their own. We judge growth by profit.",
     },
     card: {
       kicker: "B2B, SaaS and service businesses",
