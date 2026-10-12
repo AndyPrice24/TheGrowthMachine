@@ -41,19 +41,37 @@ export const tracks: Record<TrackId, Track> = {
       cta: "For ecommerce brands",
       switchTo: "Switch to ecommerce",
     },
+    /* Rebuilt from 35 LinkedIn job ads (October 2026): the reasons consumer
+       brands hire, ranked, are running several channels at once, not being
+       able to see what's working, repeat customers, margin, and agencies to
+       hold to account. Paid acquisition is framed as a discipline, not a
+       complaint. */
     machine: [
-      { name: "What comes in", text: "Rising ad costs, a flat conversion rate, thin contribution margin, marketplace fees eating the profit, a founder still approving every ad." },
-      { name: "Diagnose", text: "We pull the numbers apart order by order and channel by channel, and rank every problem by what it costs you." },
-      { name: "Design", text: "Sharper customer, stronger offer, and a channel and budget plan built on what each order actually earns." },
-      { name: "Execute", text: "We run it with your team: creative, campaigns, listings and retention. Tested, measured, and cut when it doesn't pay." },
-      { name: "Embed", text: "Reporting, playbooks and owners, so the brand keeps growing profitably when we step back." },
-      { name: "What comes out", text: "More orders that make money, customers who come back, and growth that runs on profit, not spend." },
+      {
+        name: "What comes in",
+        points: [
+          "Ad spend doing all the work",
+          "Traffic that doesn't convert",
+          "Customers who buy once",
+          "Channels nobody runs as one",
+          "Numbers no one can explain",
+        ],
+        text: "Or a brand ready for its next channel.",
+      },
+      { name: "Diagnose", text: "We find out what each order really earns, by channel, product and customer, after fees, returns and ad spend." },
+      { name: "Design", text: "Sharper customer, stronger offer, and a plan for each channel built on what it actually earns." },
+      { name: "Execute", text: "We do the work with your team: creative, campaigns, your site and listings, retention, and the tools that run them, AI included." },
+      { name: "Embed", text: "One set of numbers everyone trusts, agencies held to them, and a team that runs it without depending on anyone, us included." },
+      {
+        name: "What comes out",
+        points: ["Orders that make money", "Customers who come back", "Growth that runs on profit, not spend"],
+      },
     ],
     inOut: {
       inward:
-        "Where margin slips between the ad and the doorstep: fees, returns, stock and fulfilment, and the processes and team behind them.",
+        "Where margin slips between the ad and the doorstep: fees, returns, stock, agencies nobody holds to account, and numbers no one can explain. We fix them, and build the tools that keep them fixed.",
       outward:
-        "Who your customer really is, a sharper offer, the channels and creative that pay their way, and the budget to scale what works.",
+        "Who your customer really is, a sharper offer, creative and channels that pay their way, customers who come back, and the next channel: Amazon, retail or overseas.",
     },
     leads: "tarren",
   },
@@ -77,12 +95,24 @@ export const tracks: Record<TrackId, Track> = {
        pipeline you can predict, numbers you can trust, a sales engine that
        does not run through the founder, and new markets or launches. */
     machine: [
-      { name: "What comes in", text: "A pipeline you can't predict, numbers nobody trusts, sales that still run through the founder, a new market with no one to lead it. Or a business ready for its next stage." },
+      {
+        name: "What comes in",
+        points: [
+          "A pipeline you can't predict",
+          "Numbers nobody trusts",
+          "Sales that still run through the founder",
+          "A new market with no one to lead it",
+        ],
+        text: "Or a business ready for its next stage.",
+      },
       { name: "Diagnose", text: "We find out what's really working: every channel, deal and number, ranked by what it's worth to you." },
       { name: "Design", text: "We decide who you sell to, what you say and what you charge, and build the plan around a few numbers that matter." },
       { name: "Execute", text: "We do the work with your team: pipeline, campaigns, the sales process, and the tools that run them, AI included." },
       { name: "Embed", text: "A forecast the board can trust, playbooks your team owns, and an engine that runs without depending on anyone, us included." },
-      { name: "What comes out", text: "A pipeline you can predict, numbers you can trust, and revenue that grows faster than headcount." },
+      {
+        name: "What comes out",
+        points: ["A pipeline you can predict", "Numbers you can trust", "Revenue that grows faster than headcount"],
+      },
     ],
     inOut: {
       inward:

@@ -87,6 +87,21 @@ records the outcome. Where this file and a brief disagree, this file wins.
     "fractional"; the main SA trigger is expansion into the rest of Africa.
     Fractional demand is found by approaching permanent-role ads, which is
     Andrew's outbound.
+  - Ecommerce (35 ads, SA, UK, US, remote; `research/2026-10-linkedin-ecommerce-hiring.md`):
+    the reasons consumer brands hire, by how many ads touch them, are
+    running several channels at once and not being able to see what's
+    working (15 each), repeat customers (12), margin (11), agencies to hold
+    to account or bring in-house (9), paid acquisition (7) and conversion (6).
+  - Profit is asked for, not just tolerated: 17 of 31 ecommerce ads name
+    margin or P&L, and the DTC and marketplace brands are precise about it
+    ("contribution margin after returns", "per platform"). But no SA role
+    that runs ecommerce day to day mentions profit, so say it in plain
+    words ("what each order earns"), never as jargon.
+  - Nobody complains about ad costs; they hold a "CAC ceiling". Write paid
+    acquisition as a discipline, never as a moan.
+  - LinkedIn ads barely reach SA ecommerce buyers ("head of ecommerce"
+    returned zero). The founder-led Shopify and Takealot brands we want are
+    not advertising the seat, so ecommerce outbound needs another source.
 - **Launch scope:** Home (in its three versions, below), How we work and the
   three engagement pages, Who we are, Before you hire, and booking. No
   Insights section until four to six real articles exist.
@@ -248,6 +263,14 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   convention from memory.
 - Every change must pass `npm run build` and `npm run check` before it is
   pushed.
+- **The machine's text: lists for what goes in and out, sentences for the
+  stages (decided 12 October 2026).** What comes in and what comes out are
+  lists of things, so they are short points (`points` in `tracks.ts`), with
+  an optional closing line such as "Or a brand ready for its next channel."
+  so the list never reads as "only broken businesses need us". The four
+  stages are actions, and a sentence with a verb is what makes them read as
+  work we do. On a phone the step sits under a pinned machine with about
+  230px to fit in: five points and a closing line is the limit, measured.
 - **Pages swap in place, they do not reload (decided 9 October 2026).**
   Choosing B2B or ecommerce used to reload the whole site, which felt like
   being thrown to a new page. Astro's `ClientRouter` (in `Base.astro`) now

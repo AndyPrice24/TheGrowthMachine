@@ -116,10 +116,13 @@ const built = { desktop: await build("desktop"), mobile: await build("mobile") }
 
 /* The words beside the machine. The artwork is shared; each audience can pass
    its own copy for the six steps, in this order. */
-export interface StepCopy { name: string; text: string }
+/* What comes in and what comes out are lists, so they take `points`, with an
+   optional closing line in `text`. The four stages are actions and stay as
+   one sentence each. */
+export interface StepCopy { name: string; text?: string; points?: string[] }
 interface Props { copy?: StepCopy[] }
 
-const defaultSteps = [
+const defaultSteps: (StepCopy & { id: string; k: string })[] = [
   { id: "in", k: "In", name: "What comes in", text: "Stalled growth, an unclear go-to-market, weak acquisition, low conversion, margin leakage, founder dependency. Most businesses arrive with two or three." },
   { id: "s1", k: "01", name: "Diagnose", text: "Find the real constraints. The deep dive ranks every problem by what it costs you, in revenue and in margin." },
   { id: "s2", k: "02", name: "Design", text: "Build the growth system: a few priorities, each with an owner, a number and a place in the order." },
@@ -128,7 +131,7 @@ const defaultSteps = [
   { id: "out", k: "Out", name: "What comes out", text: "More revenue and better margins, with the systems and the team to keep it going." },
 ];
 const steps = Astro.props.copy
-  ? defaultSteps.map((s, i) => ({ ...s, ...Astro.props.copy![i] }))
+  ? defaultSteps.map(({ id, k }, i) => ({ id, k, ...Astro.props.copy![i] }))
   : defaultSteps;
 
 const LOGO_ASPECT = 528 / 1409;
@@ -214,7 +217,12 @@ const ALT =
         <li class:list={["step", { "is-active": i === 0 }]} data-step={s.id}>
           <span class="k">{s.k}</span>
           <h3 class="name display">{s.name}</h3>
-          <p class="text">{s.text}</p>
+          <div class="text">
+            {s.points && (
+              <ul class="points">{s.points.map((pt) => <li>{pt}</li>)}</ul>
+            )}
+            {s.text && <p>{s.text}</p>}
+          </div>
         </li>
       ))}
     </ol>
@@ -418,6 +426,11 @@ const ALT =
   .k { font-family: var(--f-label); font-size: var(--step-label); letter-spacing: 0.2em; text-transform: uppercase; color: var(--torch); }
   .name { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.8rem); }
   .text { color: var(--muted); max-width: 30em; }
+  .text > * + * { margin-top: 10px; }
+  .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; color: var(--cream); }
+  .points li { position: relative; padding-left: 18px; }
+  /* warm white, like the slabs and result blocks: red is the machine at work */
+  .points li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 7px; height: 7px; border-radius: 1px; background: var(--cream); opacity: 0.55; }
 
   /* ---- live: the render pins and the scroll runs it ---- */
   .is-live { height: calc(100vh + 6 * 45vh); }
@@ -447,8 +460,14 @@ const ALT =
     .frame--desktop { display: none; }
     .frame--mobile { display: block; }
     .is-live .pin { gap: 14px; justify-items: center; align-content: start; padding-top: 16px; }
-    .is-live .frame--mobile { width: min(100%, calc((100svh - 190px) * var(--ar))); }
+    /* 230px is left for the step beneath: room for five points and a line */
+    .is-live .frame--mobile { width: min(100%, calc((100svh - 230px) * var(--ar))); }
     .is-live .steps { min-height: 130px; align-content: start; width: 100%; }
+    /* the label sits beside the name, so the points get its line */
+    .is-live .step { grid-template-columns: auto minmax(0, 1fr); align-items: baseline; column-gap: 12px; }
+    .is-live .step .text { grid-column: 1 / -1; }
+    .points { gap: 1px; line-height: 1.4; }
+    .text > * + * { margin-top: 6px; }
     .is-live .step:not(.is-active) { display: none; }
   }
 
