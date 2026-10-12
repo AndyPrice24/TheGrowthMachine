@@ -269,8 +269,12 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   an optional closing line such as "Or a brand ready for its next channel."
   so the list never reads as "only broken businesses need us". The four
   stages are actions, and a sentence with a verb is what makes them read as
-  work we do. On a phone the step sits under a pinned machine with about
-  230px to fit in: five points and a closing line is the limit, measured.
+  work we do. The points are a ruled list (hairlines between them, no
+  bullets), so a point that wraps still reads as one. In and Out carry no
+  small label above them, since the heading already says it; only the four
+  stages are numbered, matching the panels in the artwork. On a phone the
+  step sits under a pinned machine with 245px to fit in: five points and a
+  closing line is the limit, measured.
 - **Pages swap in place, they do not reload (decided 9 October 2026).**
   Choosing B2B or ecommerce used to reload the whole site, which felt like
   being thrown to a new page. Astro's `ClientRouter` (in `Base.astro`) now
