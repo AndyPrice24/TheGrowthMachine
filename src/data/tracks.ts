@@ -112,7 +112,7 @@ export const tracks: Record<TrackId, Track> = {
         text: "Or a business ready for its next stage.",
       },
       { name: "Diagnose", text: "We find out what's really working: every channel, deal and number, ranked by what it's worth to you." },
-      { name: "Design", text: "We decide who you sell to, what you say and what you charge, and build the plan around a few numbers that matter." },
+      { name: "Design", text: "We decide who you sell to, what you say and what you charge, and build one plan, sales and marketing together, around a few numbers that matter." },
       { name: "Execute", text: "We do the work with your team: pipeline, campaigns, the sales process, and the tools that run them, AI included." },
       { name: "Embed", text: "A forecast the board can trust, playbooks your team owns, and an engine that runs without depending on anyone, us included." },
       {
