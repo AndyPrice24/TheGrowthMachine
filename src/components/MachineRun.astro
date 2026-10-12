@@ -116,10 +116,11 @@ const built = { desktop: await build("desktop"), mobile: await build("mobile") }
 
 /* The words beside the machine. The artwork is shared; each audience can pass
    its own copy for the six steps, in this order. */
-/* What comes in and what comes out are lists, so they take `points`, with an
-   optional closing line in `text`. The four stages are actions and stay as
-   one sentence each. */
-export interface StepCopy { name: string; text?: string; points?: string[] }
+/* Each step is built from up to three parts, in this order: an opening
+   `lead` line, `points` as a ruled list, and a closing `text` line. What
+   comes in and out are points with an optional closing line; Diagnose and
+   Design are a lead and points; Execute and Embed are one sentence. */
+export interface StepCopy { name: string; lead?: string; text?: string; points?: string[] }
 interface Props { copy?: StepCopy[] }
 
 const defaultSteps: (StepCopy & { id: string; k: string })[] = [
@@ -218,6 +219,7 @@ const ALT =
           {s.k && <span class="k">{s.k}</span>}
           <h3 class="name display">{s.name}</h3>
           <div class="text">
+            {s.lead && <p class="lead">{s.lead}</p>}
             {s.points && (
               <ul class="points">{s.points.map((pt) => <li>{pt}</li>)}</ul>
             )}
@@ -429,6 +431,7 @@ const ALT =
   .text > * + * { margin-top: 14px; }
   /* A ruled list, like a spec sheet: the rules say where each point ends, so
      a point that wraps still reads as one. No bullets; red is the machine. */
+  .lead { color: var(--cream); }
   .points { list-style: none; margin: 0; padding: 0; color: var(--cream); line-height: 1.35; border-bottom: 1px solid var(--line); }
   .points li { padding-block: 9px; border-top: 1px solid var(--line); text-wrap: balance; }
 
@@ -461,13 +464,14 @@ const ALT =
     .frame--desktop { display: none; }
     .frame--mobile { display: block; }
     .is-live .pin { gap: 14px; justify-items: center; align-content: start; padding-top: 16px; }
-    /* 245px is left for the step beneath: room for five points and a line */
-    .is-live .frame--mobile { width: min(100%, calc((100svh - 245px) * var(--ar))); }
+    /* 265px is left for the step beneath: room for a lead and four points */
+    .is-live .frame--mobile { width: min(100%, calc((100svh - 265px) * var(--ar))); }
     .is-live .steps { min-height: 130px; align-content: start; width: 100%; }
     /* the label sits beside the name, so the points get its line */
     .is-live .step { grid-template-columns: auto minmax(0, 1fr); align-items: baseline; column-gap: 12px; }
     .is-live .step .text { grid-column: 1 / -1; }
-    .points { line-height: 1.3; }
+    .is-live .text { font-size: 0.9375rem; line-height: 1.45; }
+    .points { line-height: 1.28; }
     .points li { padding-block: 3px; }
     .text > * + * { margin-top: 6px; }
     .is-live .step:not(.is-active) { display: none; }

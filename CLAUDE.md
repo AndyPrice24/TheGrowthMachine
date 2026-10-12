@@ -276,8 +276,12 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   bullets), so a point that wraps still reads as one. In and Out carry no
   small label above them, since the heading already says it; only the four
   stages are numbered, matching the panels in the artwork. On a phone the
-  step sits under a pinned machine with 245px to fit in: five points and a
-  closing line is the limit, measured.
+  step sits under a pinned machine with 265px to fit in, and its text is
+  15px: a lead and four points (Design) is the limit, measured. Diagnose
+  and Design open with a `lead` line, then points; Execute and Embed stay
+  one sentence. Diagnose and Design are written per audience: the
+  structure is shared, the nouns are not (deals and who wins them for B2B,
+  each order after fees and returns for ecommerce).
 - **Pages swap in place, they do not reload (decided 9 October 2026).**
   Choosing B2B or ecommerce used to reload the whole site, which felt like
   being thrown to a new page. Astro's `ClientRouter` (in `Base.astro`) now
