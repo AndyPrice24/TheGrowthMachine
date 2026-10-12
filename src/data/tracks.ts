@@ -64,7 +64,13 @@ export const tracks: Record<TrackId, Track> = {
       { name: "Embed", text: "One set of numbers everyone trusts, agencies held to them, and a team that runs it without depending on anyone, us included." },
       {
         name: "What comes out",
-        points: ["Orders that make money", "Customers who come back", "Growth that runs on profit, not spend"],
+        points: [
+          "Orders that make money",
+          "Customers who come back",
+          "Every channel run as one business",
+          "Numbers everyone can read",
+          "Growth that runs on profit, not spend",
+        ],
       },
     ],
     inOut: {
@@ -111,7 +117,13 @@ export const tracks: Record<TrackId, Track> = {
       { name: "Embed", text: "A forecast the board can trust, playbooks your team owns, and an engine that runs without depending on anyone, us included." },
       {
         name: "What comes out",
-        points: ["A pipeline you can predict", "Numbers you can trust", "Revenue that grows faster than headcount"],
+        points: [
+          "A pipeline you can predict",
+          "Numbers you can trust",
+          "Sales that no longer depend on you",
+          "A new market, led and growing",
+          "Revenue that grows faster than your costs",
+        ],
       },
     ],
     inOut: {

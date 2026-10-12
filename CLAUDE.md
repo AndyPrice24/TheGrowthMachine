@@ -267,7 +267,10 @@ names · booking tool (Cal.com recommended, not yet confirmed) · Path B label
   stages (decided 12 October 2026).** What comes in and what comes out are
   lists of things, so they are short points (`points` in `tracks.ts`), with
   an optional closing line such as "Or a brand ready for its next channel."
-  so the list never reads as "only broken businesses need us". The four
+  so the list never reads as "only broken businesses need us". Every
+  problem going in has its answer coming out, and the last point out is
+  the profit payoff, because a reader checks one list against the other
+  and a problem with no answer reads as one we don't fix. The four
   stages are actions, and a sentence with a verb is what makes them read as
   work we do. The points are a ruled list (hairlines between them, no
   bullets), so a point that wraps still reads as one. In and Out carry no
