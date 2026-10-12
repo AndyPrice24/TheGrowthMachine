@@ -25,7 +25,7 @@ const Tag = variant === "path" && href && state !== "chosen" ? "a" : "article";
 ---
 
 <Tag
-  class:list={["card", variant, state]}
+  class:list={["card", variant, state, { "on-ink": state === "chosen" }]}
   href={Tag === "a" ? href : undefined}
   data-astro-prefetch={Tag === "a" && variant === "path" ? "viewport" : undefined}
 >
@@ -55,15 +55,17 @@ const Tag = variant === "path" && href && state !== "chosen" ? "a" : "article";
     min-width: 0;
   }
   a.card { transition: border-color 0.2s; }
-  a.card:hover { border-color: var(--torch); }
+  a.card:hover { border-color: var(--fg); }
   .kicker { color: var(--muted); }
   .body { color: var(--muted); max-width: 30em; display: grid; gap: 12px; }
   .principle { font-weight: 600; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
   .go { margin-top: auto; padding-top: 10px; font-weight: 600; display: inline-flex; gap: 8px; align-self: flex-start; }
 
-  .chosen { border-color: var(--torch); border-top-width: 3px; }
+  /* the visitor's own version: set in ink, so it reads as selected, with the
+     torch only as a bar along the top */
+  .chosen { background: var(--bg); color: var(--fg); border-color: var(--ink); border-top: 4px solid var(--torch); }
   .chosen .go { color: var(--muted); font-weight: 400; }
-  .other { opacity: 0.62; transition: opacity 0.2s, border-color 0.2s; }
+  .other { opacity: 0.8; transition: opacity 0.2s, border-color 0.2s; }
   .other:hover, .other:focus-visible { opacity: 1; }
 
   .symptom { border-width: 1px 0 0; border-radius: 0; padding: 20px 0 0; gap: 10px; }

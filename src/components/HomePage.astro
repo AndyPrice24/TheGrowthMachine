@@ -7,10 +7,10 @@
  *
  * Order, and why:
  *   1 Hero            one promise: without the full-time hire
- *   2 Before you hire why fractional: not an agency, not a full-time hire.
- *                     Senior growth leaders who see the whole picture and do
- *                     the work. It explains the promise, so it comes next
- *   3 Both sides      revenue and margin; the CMO, CRO and founder mindsets
+ *   2 Before you hire recognition first (three symptoms), then why us: an
+ *                     agency, a full-time hire and The Growth Machine side by
+ *                     side. It explains the promise, so it comes next
+ *   3 Both sides      revenue and margin feed profit. Nothing else here
  *   4 The split       ecommerce or B2B. On / the page ends here
  *   5 How we work     the machine, with the words beside it for this audience
  *   6 In and out      fixing what leaks, building what's next
@@ -64,35 +64,39 @@ const meta = track?.meta ?? {
     </Fragment>
   </Hero>
 
-  <Section tone="cream" label="Before you hire" title="Not another agency. Not a full-time hire, yet." split>
-    <p class="standfirst display">Senior growth leaders who see the whole picture, and do the work.</p>
-    <div class="problem">
-      <div class="lede-col">
-        <p class="lede">
-          Growing businesses reach an awkward stage. There are people, agencies, software and ideas, yet growth is
-          uneven and nobody owns the whole commercial picture.
-        </p>
-        <p class="muted">
-          An agency does what it is briefed to do, and someone still has to write the brief. A full-time CRO or CMO
-          costs a full-time salary before you know which title you need, and most of what holds growth back spans
-          several titles at once.
-        </p>
-        <p class="lede-strong">
-          So we step in: across the titles, inside your business, for as long as you need us. When you
-          do hire, or bring in an agency, they inherit something that already works.
-        </p>
+  <Section tone="cream" label="Before you hire" title="Sound familiar?">
+    <ol class="symptoms">
+      <li>
+        <p class="symptom-title display">Growth has stalled, or stopped being predictable.</p>
+        <p class="muted">And nobody can say whether it's a revenue problem or a margin problem.</p>
+      </li>
+      <li>
+        <p class="symptom-title display">Every big decision still goes through the founder.</p>
+        <p class="muted">So the business only grows as fast as one person's diary.</p>
+      </li>
+      <li>
+        <p class="symptom-title display">You're about to hire a CRO, CMO or GTM lead.</p>
+        <p class="muted">Before knowing which seat you actually need filled.</p>
+      </li>
+    </ol>
+
+    <div class="options">
+      <h3 class="display options-title"><span>Not another agency.</span> <span>Not a full-time hire, yet.</span></h3>
+      <div class="compare">
+        <div class="option">
+          <p class="label">An agency</p>
+          <p>Does what it's briefed to do. Someone still writes the brief.</p>
+        </div>
+        <div class="option">
+          <p class="label">A full-time hire</p>
+          <p>A full salary before you know which seat you need.</p>
+        </div>
+        <div class="option us on-ink">
+          <p class="label">The Growth Machine</p>
+          <p>Senior growth leaders who see the whole picture and do the work: across the titles, inside your business, for as long as you need us.</p>
+        </div>
       </div>
-      <div class="symptoms">
-        <Card variant="symptom" title="Growth has stalled, or stopped being predictable.">
-          <p>And nobody can say whether it is a revenue problem or a margin problem.</p>
-        </Card>
-        <Card variant="symptom" title="Every important decision still goes through the founder.">
-          <p>So the business can only grow as fast as one person's diary.</p>
-        </Card>
-        <Card variant="symptom" title="You are about to hire a CRO, CMO or GTM lead.">
-          <p>Before knowing which seat the business actually needs filled, or for how many days a week.</p>
-        </Card>
-      </div>
+      <p class="options-close">When you do hire, they inherit something that already works.</p>
     </div>
   </Section>
 
@@ -107,30 +111,15 @@ const meta = track?.meta ?? {
         <div class="side">
           <h3 class="display h3">Revenue</h3>
           <p>New ways to earn, better ways to earn, and more from the same effort.</p>
-          <p class="levers muted">Go-to-market · Pricing · Channels · Retention</p>
+          <ul class="levers"><li>Go-to-market</li><li>Pricing</li><li>Channels</li><li>Retention</li></ul>
         </div>
         <div class="side">
           <h3 class="display h3">Margin</h3>
           <p>Money the business already makes and quietly loses on the way out.</p>
-          <p class="levers muted">Fees and costs · Processes · Team shape · Wasted spend</p>
+          <ul class="levers"><li>Fees and costs</li><li>Processes</li><li>Team shape</li><li>Wasted spend</li></ul>
         </div>
       </div>
     </div>
-    <div class="measures">
-      <div class="measure">
-        <p class="label">CMO mindset</p>
-        <p class="by display">sees the market.</p>
-      </div>
-      <div class="measure">
-        <p class="label">CRO mindset</p>
-        <p class="by display">sees the revenue.</p>
-      </div>
-      <div class="measure founder">
-        <p class="label">Founder mindset</p>
-        <p class="by display">sees all of it.</p>
-      </div>
-    </div>
-    <p class="pairing">We bring all three to the seat you need filled.</p>
   </Section>
 
   <Section tone="cream" id="your-path" label="Start where you are" title="Which sounds like you?">
@@ -144,7 +133,7 @@ const meta = track?.meta ?? {
             href={`${t.path}#your-path`}
             kicker={t.card.kicker}
             title={t.card.title}
-            cta={state === "chosen" ? "Your version, below" : state === "other" ? t.card.switchTo : t.card.cta}
+            cta={state === "chosen" ? "You're here" : state === "other" ? t.card.switchTo : t.card.cta}
             state={state}
           >
             <p>{t.card.text}</p>
@@ -152,11 +141,6 @@ const meta = track?.meta ?? {
         );
       })}
     </div>
-    {!track && (
-      <p class="fork-note">
-        Not sure which? <a class="link" href="/call">Book a 30-minute call</a> and we will work it out together.
-      </p>
-    )}
   </Section>
 
   {track && (
@@ -322,30 +306,35 @@ const meta = track?.meta ?? {
   .sides { display: grid; gap: 28px; }
   .side { display: grid; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); }
   .side p { max-width: 32em; }
-  .levers { font-family: var(--f-label); font-size: 0.82rem; letter-spacing: 0.12em; }
-  /* the section's point: three ways of keeping score across the full width,
-     the founder's marked, so the comparison is seen before it is read */
-  .measures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-  .measure { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
-  .measure.founder { border-top: 3px solid var(--torch); padding-top: 18px; }
-  .measure .by { font-size: var(--step-h3); line-height: 1.1; letter-spacing: var(--track-display); max-width: 10em; }
-  .measure:not(.founder) .by { color: var(--muted); }
-  .pairing { font-size: var(--step-lede); font-weight: 600; margin-top: -8px; }
+  .levers { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .levers li { font-size: var(--step-small); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
 
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 
-  .problem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
-  .lede-col { display: grid; gap: 18px; }
-  .lede-col .muted { max-width: 34em; }
-  .standfirst { font-size: var(--step-h3); line-height: 1.15; letter-spacing: var(--track-display); max-width: 22em; text-wrap: balance; margin-top: -8px; }
-  .lede-strong { font-size: var(--step-lede); font-weight: 600; max-width: 30em; }
-  .symptoms { display: grid; gap: 28px; }
+  /* Recognition: three symptoms, each under a short torch bar (a graphic,
+     so allowed on cream), set large enough to be read before anything else. */
+  .symptoms { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); }
+  .symptoms li { display: grid; gap: 10px; align-content: start; }
+  .symptoms li::before { content: ""; width: 36px; height: 4px; background: var(--torch); margin-bottom: 6px; }
+  .symptom-title { font-size: clamp(1.3rem, 1.05rem + 1vw, 1.75rem); line-height: 1.1; }
+
+  /* Why us: the three options side by side, ours set in ink so it is seen
+     before it is read. */
+  .options { display: grid; gap: clamp(20px, 3vw, 32px); padding-top: clamp(40px, 6vw, 72px); border-top: 1px solid var(--line); }
+  .options-title { font-size: var(--step-h2); }
+  .options-title span { display: inline-block; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 12px; }
+  .option { display: grid; gap: 10px; align-content: start; padding: clamp(20px, 2.4vw, 28px); border: 1px solid var(--line); border-radius: var(--radius); }
+  .option .label { color: var(--muted); }
+  .option:not(.us) p:last-child { color: var(--muted); }
+  .us { border-color: var(--ink); }
+  .us .label { color: var(--torch); }
+  .us p:last-child { font-size: var(--step-lede); line-height: 1.45; }
+  .options-close { font-size: var(--step-lede); font-weight: 600; }
 
   .bench { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 10px 32px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 24px; }
   .bench .muted { max-width: 44em; }
-
-  .fork-note { color: var(--muted); }
 
   .io { gap: clamp(28px, 4vw, 56px); }
   .io-col { display: grid; gap: 10px; align-content: start; padding-top: 20px; border-top: 1px solid var(--line); }
@@ -359,10 +348,18 @@ const meta = track?.meta ?? {
   @media (max-width: 900px) {
     .grid-3 { grid-template-columns: minmax(0, 1fr); }
   }
+  /* below desktop: the two alternatives share a row, ours spans beneath */
+  @media (max-width: 900px) {
+    .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .us { grid-column: 1 / -1; }
+  }
   @media (max-width: 760px) {
-    .reframe, .problem, .grid-2, .bench { grid-template-columns: minmax(0, 1fr); }
-    .measures { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .measure { grid-template-columns: 7.5em minmax(0, 1fr); align-items: baseline; gap: 12px; padding-block: 14px; }
-    .measure.founder { padding-top: 12px; }
+    .reframe, .grid-2, .bench { grid-template-columns: minmax(0, 1fr); }
+    .symptoms { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+    .symptoms li { gap: 6px; }
+    .symptoms li::before { margin-bottom: 4px; }
+    .compare { gap: 8px; }
+    .option { padding: 14px 16px; gap: 6px; }
+    .option .label { letter-spacing: 0.22em; }
   }
 </style>

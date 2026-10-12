@@ -38,7 +38,7 @@ export const tracks: Record<TrackId, Track> = {
       kicker: "Ecommerce and consumer brands",
       title: "You sell online, on Amazon or into retail.",
       text: "Sharper customer, stronger offer. Data-led decisions on channels, creative and budget, so you scale what pays.",
-      cta: "For ecommerce brands",
+      cta: "How we'd work with you",
       switchTo: "Switch to ecommerce",
     },
     /* Rebuilt from 35 LinkedIn job ads (October 2026): the reasons consumer
@@ -108,9 +108,9 @@ export const tracks: Record<TrackId, Track> = {
     },
     card: {
       kicker: "B2B, SaaS and service businesses",
-      title: "You need a CRO, CMO or GTM lead, but not full-time.",
+      title: "You sell to other businesses.",
       text: "A pipeline you can predict and numbers you can trust. At home, across Africa or overseas.",
-      cta: "For B2B businesses",
+      cta: "How we'd work with you",
       switchTo: "Switch to B2B",
     },
     /* Rebuilt from 32 LinkedIn job ads and a web scan of fractional postings
